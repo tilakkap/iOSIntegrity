@@ -40,18 +40,12 @@ final class iOSIntegrityTests: XCTestCase {
 
     func testCreateBundleFile() throws {
         let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Library/Developer/Xcode/Archives/2565-09-01/kerry_wallet_dev 1-9-2565 BE 15.16.xcarchive/Products/Applications/kerry_wallet.app")
-        let expectation = expectation(description: "SomeService does stuff and runs the callback closure")
+        let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath)
 
-
-        iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath, completion: { (result) -> () in
-            // do stuff with the result
-            expectation.fulfill()
-            debugPrint(result)
-            XCTAssertEqual(result.count, 2)
-
-        })
-        waitForExpectations(timeout: 30)
+        XCTAssertEqual(checkSum.count, 2)
 
     }
 
 }
+
+

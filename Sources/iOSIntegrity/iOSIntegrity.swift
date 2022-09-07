@@ -15,7 +15,7 @@ public struct iOSIntegrity {
         var file: String
     }
 
-    public static func createBundleCheckSum(bundlePath: URL, completion: @escaping ([CheckSum])->()) {
+    public static func createBundleCheckSum(bundlePath: URL) -> [CheckSum]  {
 
         var integrity = [CheckSum]()
 
@@ -43,7 +43,7 @@ public struct iOSIntegrity {
                     }
                 }
             }
-            completion(integrity)
+            return integrity
     }
 
     public static func createIntegrityFile(bundlePath: URL, publicKeyPem: URL, integrity: [CheckSum]) -> Bool {

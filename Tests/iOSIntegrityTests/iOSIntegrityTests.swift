@@ -46,6 +46,25 @@ final class iOSIntegrityTests: XCTestCase {
 
     }
 
+    func testGenerateKeyPair() throws {
+       let key = RSAUtils.generateKeyPair()
+        debugPrint(key)
+        XCTAssertNotNil(key)
+    }
+
+    func testRSAWithGenerateKeyPair() throws {
+
+        let ketPair = RSAUtils.generateKeyPair()
+
+        let cipherBase64 = RSAUtils.encrypt(publicKeyPem: ketPair?.publicKey ?? "", message: "test123")
+        debugPrint(cipherBase64)
+
+        let plain = RSAUtils.decrypt(privateKeyPem: ketPair?.privateKey ?? "", base64Cipher: cipherBase64)
+        debugPrint(plain)
+
+        XCTAssertEqual(plain, "test123")
+    }
+
 }
 
 

@@ -10,7 +10,7 @@ import CryptoSwift
 
 public struct iOSIntegrity {
 
-    public struct CheckSum: Codable {
+    public struct CheckSum: Codable, Equatable {
         var checkSum: String
         var file: String
     }
@@ -46,7 +46,7 @@ public struct iOSIntegrity {
             return integrity
     }
 
-    public static func createIntegrityFile(bundlePath: URL) -> Bool {
+    public static func createIntegrityFile(bundlePath: URL) -> [CheckSum] {
         //create checksum
         let integrity = createBundleCheckSum(bundlePath: bundlePath)
         //create key
@@ -66,18 +66,20 @@ public struct iOSIntegrity {
         //write private key to file
         let privateKeyString = keyPair?.privateKey ?? ""
         try! privateKeyString.write(to: privateKeyURL, atomically: false, encoding: .utf8)
-        return true
+        return integrity
     }
 
-    public static func getBundleCheckSum(bundlePath: URL, privateKeyPem: URL) -> [CheckSum] {
+    public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL) -> Bool {
+        let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath);
         let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
+        let privateKeyPemFileUrl = bundlePath.appendingPathComponent("private.key")
         let decoder = JSONDecoder()
         let integrityJson = try! Data(contentsOf: integrityFileUrl)
         let encryptedOutput = try! decoder.decode(AESUtils.EncryptedOutput.self, from: integrityJson)
-        let encryptedBase64 = Pef2.decrypt(privateKeyPem: privateKeyPem, encrypted: encryptedOutput)
+        let encryptedBase64 = Pef2.decrypt(privateKeyPem: privateKeyPemFileUrl, encrypted: encryptedOutput)
         let encrypted = Data(base64Encoded: encryptedBase64)
         let bundleCheckSum = try! JSONDecoder().decode([CheckSum].self, from: encrypted!)
-        return bundleCheckSum
+        return bundleCheckSum == currentCheckSum
     }
 }
 

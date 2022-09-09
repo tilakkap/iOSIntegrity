@@ -46,17 +46,25 @@ public struct iOSIntegrity {
             return integrity
     }
 
-    public static func createIntegrityFile(bundlePath: URL, publicKeyPem: URL, integrity: [CheckSum]) -> Bool {
+    public static func createIntegrityFile(bundlePath: URL) -> Bool {
+        //create checksum
+        let integrity = createBundleCheckSum(bundlePath: bundlePath)
+        //create key
+        let ketPair = RSAUtils.generateKeyPair()
         //Set filename for integrity data
         let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
+        //Set filename for private key
+        let privateKeyURL = bundlePath.appendingPathComponent("private.key")
         //convert Data to Json
         let integrityJson = try! JSONEncoder().encode(integrity)
         //encrypt base64 encoded json data
-        let integrityEncrypted = Pef2.encrypt(publicKeyPem: publicKeyPem, data: integrityJson.base64EncodedString())
+        let integrityEncrypted = Pef2.encrypt(publicKeyPem: ketPair?.publicKey ?? "", data: integrityJson.base64EncodedString())
         //convert encrypted data to Json
         let integrityEncryptedJson = try! JSONEncoder().encode(integrityEncrypted)
         //write encrypted json data to file
         try! integrityEncryptedJson.write(to: integrityFileUrl)
+        //write private key to file
+        try! integrityEncryptedJson.write(to: privateKeyURL)
         return true
     }
 

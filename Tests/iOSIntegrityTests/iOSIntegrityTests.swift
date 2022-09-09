@@ -26,6 +26,18 @@ final class iOSIntegrityTests: XCTestCase {
         XCTAssertEqual(plain, "test1234")
     }
 
+    func testPef2WithString() throws {
+        let ketPair = RSAUtils.generateKeyPair()
+
+        let aesEncrypted = Pef2.encrypt(publicKeyPem: ketPair?.publicKey ?? "", data: "test1234")
+        debugPrint(aesEncrypted)
+
+        let plain = Pef2.decrypt(privateKeyPem: ketPair?.privateKey ?? "", encrypted: aesEncrypted)
+        debugPrint(plain)
+
+        XCTAssertEqual(plain, "test1234")
+    }
+
     func testAES() throws {
         let publicKeyPem = URL.init(fileURLWithPath: "/Users/thomas/Projects/react-native/reactNativeTemplate/keys/public.pem")
         let cipherBase64 = RSAUtils.encrypt(publicKeyPem: publicKeyPem, message: "test123")
@@ -38,7 +50,7 @@ final class iOSIntegrityTests: XCTestCase {
         XCTAssertEqual(plain, "test123")
     }
 
-    func testCreateBundleFile() throws {
+    func testCreateBundleCheckSum() throws {
         let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Library/Developer/Xcode/Archives/2565-09-01/kerry_wallet_dev 1-9-2565 BE 15.16.xcarchive/Products/Applications/kerry_wallet.app")
         let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath)
 
@@ -63,6 +75,37 @@ final class iOSIntegrityTests: XCTestCase {
         debugPrint(plain)
 
         XCTAssertEqual(plain, "test123")
+    }
+
+    func testCreateIntegrityFile() throws {
+
+        let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Library/Developer/Xcode/Archives/2565-09-01/kerry_wallet_dev 1-9-2565 BE 15.16.xcarchive/Products/Applications/kerry_wallet.app")
+
+        let integrityFilePath = bundlePath.appendingPathComponent("integrity.txt")
+        do {
+            try FileManager.default.removeItem(at: integrityFilePath)
+            print("TEST - Integrity file has been deleted")
+        } catch {
+            print(error)
+        }
+
+        let keyPath = bundlePath.appendingPathComponent("private.key")
+        do {
+            try FileManager.default.removeItem(at: keyPath)
+            print("TEST - Private key file has been deleted")
+        } catch {
+            print(error)
+        }
+
+        let IntegrityFile = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath)
+        let isExistInterityFile = (try integrityFilePath.resourceValues(forKeys: [.isRegularFileKey])).isRegularFile
+        let isExistPrivateKeyFile = (try integrityFilePath.resourceValues(forKeys: [.isRegularFileKey])).isRegularFile
+
+
+
+        XCTAssertEqual(IntegrityFile, true)
+        XCTAssertEqual(isExistInterityFile, true)
+        XCTAssertEqual(isExistPrivateKeyFile, true)
     }
 
 }

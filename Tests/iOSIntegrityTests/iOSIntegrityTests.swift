@@ -27,12 +27,12 @@ final class iOSIntegrityTests: XCTestCase {
     }
 
     func testPef2WithString() throws {
-        let ketPair = RSAUtils.generateKeyPair()
+        let keyPair = RSAUtils.generateKeyPair()
 
-        let aesEncrypted = Pef2.encrypt(publicKeyPem: ketPair?.publicKey ?? "", data: "test1234")
+        let aesEncrypted = Pef2.encrypt(publicKeyPem: keyPair?.publicKey ?? "", data: "test1234")
         debugPrint(aesEncrypted)
 
-        let plain = Pef2.decrypt(privateKeyPem: ketPair?.privateKey ?? "", encrypted: aesEncrypted)
+        let plain = Pef2.decrypt(privateKeyPem: keyPair?.privateKey ?? "", encrypted: aesEncrypted)
         debugPrint(plain)
 
         XCTAssertEqual(plain, "test1234")
@@ -66,12 +66,12 @@ final class iOSIntegrityTests: XCTestCase {
 
     func testRSAWithGenerateKeyPair() throws {
 
-        let ketPair = RSAUtils.generateKeyPair()
+        let keyPair = RSAUtils.generateKeyPair()
 
-        let cipherBase64 = RSAUtils.encrypt(publicKeyPem: ketPair?.publicKey ?? "", message: "test123")
+        let cipherBase64 = RSAUtils.encrypt(publicKeyPem: keyPair?.publicKey ?? "", message: "test123")
         debugPrint(cipherBase64)
 
-        let plain = RSAUtils.decrypt(privateKeyPem: ketPair?.privateKey ?? "", base64Cipher: cipherBase64)
+        let plain = RSAUtils.decrypt(privateKeyPem: keyPair?.privateKey ?? "", base64Cipher: cipherBase64)
         debugPrint(plain)
 
         XCTAssertEqual(plain, "test123")

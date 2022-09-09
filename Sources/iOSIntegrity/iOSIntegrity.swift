@@ -29,9 +29,7 @@ public struct iOSIntegrity {
 
                         if (fileKey == "Info.plist" || fileKey == "main.jsbundle") {
                             if let fileData = try? Data(contentsOf: fileURL) {
-                                debugPrint(String(fileKey))
                                 let crcHex = fileData.crc32().toHexString()
-                                debugPrint(crcHex)
                                 integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
                             }
                         }
@@ -41,6 +39,7 @@ public struct iOSIntegrity {
                 }
             }
         }
+        integrity.sort{ $0.file < $1.file }
         return integrity
     }
 

@@ -32,7 +32,9 @@ let package = Package(
                     dependencies: ["CryptoSwift"]),
             .executableTarget(
                     name: "iOSIntegrityCli",
-                    dependencies: [.product(name: "ArgumentParser", package: "swift-argument-parser")]),
+                    dependencies: [
+                        "iOSIntegrity",
+                        .product(name: "ArgumentParser", package: "swift-argument-parser")]),
             .testTarget(
                     name: "iOSIntegrityTests",
                     dependencies: ["iOSIntegrity"]),

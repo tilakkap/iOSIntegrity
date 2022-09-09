@@ -15,35 +15,33 @@ public struct iOSIntegrity {
         var file: String
     }
 
-    public static func createBundleCheckSum(bundlePath: URL) -> [CheckSum]  {
+    public static func createBundleCheckSum(bundlePath: URL) -> [CheckSum] {
 
         var integrity = [CheckSum]()
 
         if let enumerator = FileManager.default.enumerator(at: bundlePath, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles, .skipsPackageDescendants]) {
-                for case let fileURL as URL in enumerator {
-                    do {
-                        let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
-                        if fileAttributes.isRegularFile! {
+            for case let fileURL as URL in enumerator {
+                do {
+                    let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
+                    if fileAttributes.isRegularFile! {
 
-                            let exname: String = (fileURL.pathExtension)
+                        let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
 
-                                let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
-
-                                if(fileKey == "Info.plist" || fileKey == "main.jsbundle"){
-                                    if let fileData = try? Data(contentsOf: fileURL) {
-                                        debugPrint(String(fileKey))
-                                        let crcHex = fileData.crc32().toHexString()
-                                        debugPrint(crcHex)
-                                        integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
-                                    }
-                                }
+                        if (fileKey == "Info.plist" || fileKey == "main.jsbundle") {
+                            if let fileData = try? Data(contentsOf: fileURL) {
+                                debugPrint(String(fileKey))
+                                let crcHex = fileData.crc32().toHexString()
+                                debugPrint(crcHex)
+                                integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
+                            }
                         }
-                    } catch {
-                        print(error, fileURL)
                     }
+                } catch {
+                    print(error, fileURL)
                 }
             }
-            return integrity
+        }
+        return integrity
     }
 
     public static func createIntegrityFile(bundlePath: URL) -> [CheckSum] {

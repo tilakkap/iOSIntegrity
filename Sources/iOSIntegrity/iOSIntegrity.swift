@@ -8,7 +8,7 @@
 import Foundation
 import CryptoSwift
 
-public struct iOSIntegrity {
+public class iOSIntegrity {
 
     public struct CheckSum: Codable, Equatable {
         var checkSum: String
@@ -66,6 +66,7 @@ public struct iOSIntegrity {
         return integrity
     }
 
+    @objc
     public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL) -> Bool {
         let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath);
         let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")

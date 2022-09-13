@@ -8,7 +8,7 @@ Good mood
 To add a package dependency to your Xcode project, Select Project -> Select Package Dependencies -> Click on plus button (lower left corner)
 ![](xcode-package-dependencies.png)
 
-in the next window search following url `https://github.com/tilakkap/iOSIntegrity` and click Add Package
+In the next window search following url `https://github.com/tilakkap/iOSIntegrity` and click Add Package
 
 ![](xcode-add-package.png)
 

@@ -15,7 +15,7 @@ public class iOSIntegrity {
         var file: String
     }
 
-    public static func createBundleCheckSum(bundlePath: URL) -> [CheckSum] {
+    public static func createBundleCheckSum(bundlePath: URL, suffix: String? = nil) -> [CheckSum] {
 
         var integrity = [CheckSum]()
 
@@ -29,7 +29,7 @@ public class iOSIntegrity {
 
                         if (fileKey == "Info.plist" || fileKey == "main.jsbundle") {
                             if let fileData = try? Data(contentsOf: fileURL) {
-                                let crcHex = fileData.crc32().toHexString()
+                                let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
                                 integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
                             }
                         }
@@ -43,9 +43,9 @@ public class iOSIntegrity {
         return integrity
     }
 
-    public static func createIntegrityFile(bundlePath: URL) -> [CheckSum] {
+    public static func createIntegrityFile(bundlePath: URL, suffix: String? = nil) -> [CheckSum] {
         //create checksum
-        let integrity = createBundleCheckSum(bundlePath: bundlePath)
+        let integrity = createBundleCheckSum(bundlePath: bundlePath, suffix: suffix)
         //create key
         let keyPair = RSAUtils.generateKeyPair()
         //Set filename for integrity data

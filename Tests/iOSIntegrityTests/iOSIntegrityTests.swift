@@ -108,12 +108,18 @@ final class iOSIntegrityTests: XCTestCase {
         XCTAssertEqual(isExistPrivateKeyFile, true)
     }
 
-
     func testCheckBundleCheckSum() throws {
 
         let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Library/Developer/Xcode/Archives/2565-09-01/kerry_wallet_dev 1-9-2565 BE 15.16.xcarchive/Products/Applications/kerry_wallet.app")
         let checkSum: Bool = iOSIntegrity.checkBundleCheckSum(bundlePath: bundlePath)
         XCTAssertEqual(checkSum, true)
+    }
+
+    func testCreateBundleCheckSumWithOffset() throws {
+        let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Library/Developer/Xcode/Archives/2565-09-01/kerry_wallet_dev 1-9-2565 BE 15.16.xcarchive/Products/Applications/kerry_wallet.app")
+        let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath, suffix: "a")
+        XCTAssertEqual(checkSum.count, 2)
+
     }
 }
 

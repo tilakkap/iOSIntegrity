@@ -62,22 +62,25 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
 Select xcodeproj file of you project -> Select Target -> Select Build Phases -> Click on plus button (upper left corner) -> Select New Run Script Phase.
 ![](xcode-build-phases-add-script.png)
-A description of this package.
 
-sudo arch -x86_64 gem install ffi
-add this code at the end of the pod file which is inside ios folder:
+Xcode will add a empty script
 
-```ruby
-post_install do |installer|
-    installer.pods_project.targets.each do |target|
-        target.build_configurations.each do |config|
-            config.build_settings["ONLY_ACTIVE_ARCH"] = "NO"
-        end
-    end
-end
+![](xcode-build-phases-script.png)
+
+Put following code in the script window
+```shell
+cd ${BUILD_DIR%Build/*}SourcePackages/checkouts/iOSIntegrity
+SDKROOT=macosx
+swift run -c release iOSIntegrityCli $METAL_LIBRARY_OUTPUT_DIR
 ```
-Add following code to application method in AppDelegate.m
 
-cd ios/ && arch -x86_64 pod install.
+
+## Problems M1
+
+Run following commands
+```shell
+sudo arch -x86_64 gem install ffi
+cd ios/ && arch -x86_64 pod install
+```
 
 Select your project in Xcode, and go to "Build Settings". Scroll down until you see "Search Paths", and finally, "Library Search Paths". Replace "$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)" with "$(SDKROOT)/usr/lib/swift".

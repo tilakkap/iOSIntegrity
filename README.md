@@ -1,5 +1,22 @@
 # iOSIntegrity
 
+## Requirements
+
+Good mood
+
+## Add Package Dependency
+To add a package dependency to your Xcode project, Select Project -> Select Package Dependencies -> Click on plus button (lower left corner)
+![](xcode-package-dependencies.png)
+
+in the next window search following url `https://github.com/tilakkap/iOSIntegrity` and 
+
+![](xcode-add-package.png)
+
+Select iOSIntegrity and click Add Package
+
+![](xcode-choose-library.png)
+
+
 ## Installation in IOS 
 
 ### Step 1: Create New Swift Class

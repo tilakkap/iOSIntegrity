@@ -61,9 +61,7 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 ## Step 1: Add custom Run Script in Build Phases  
 
 Select xcodeproj file of you project -> Select Target -> Select Build Phases -> Click on plus button (upper left corner) -> Select New Run Script Phase.
-
-![a red dot](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==)
-
+![](xcode-build-phases-add-script.png)
 A description of this package.
 
 sudo arch -x86_64 gem install ffi
@@ -79,8 +77,6 @@ post_install do |installer|
 end
 ```
 Add following code to application method in AppDelegate.m
-
-
 
 cd ios/ && arch -x86_64 pod install.
 

@@ -46,6 +46,11 @@ In AppDelegate.m:
 The file:`<#YourProjectName#>-Swift.h` should already be created automatically in your project, even if you can not see it.
 
 ## Step 3: Add following code to application method in AppDelegate.m
+before 
+```objectivec
+[self.window makeKeyAndVisible];
+```
+
 
 ```objectivec
 //integrity
@@ -54,8 +59,13 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     bool ic = [IntegrityCheck check];
     
     if(ic == false) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            exit(1);
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"INTEGRITY" message:@"Something went wrong" preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK",@"confirm") style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                // continue your work
+                exit(1);
+            }]];
+            [self.window.rootViewController presentViewController:alert animated:YES completion: nil];
         });
     }
 });

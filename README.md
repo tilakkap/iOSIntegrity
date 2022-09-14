@@ -98,4 +98,14 @@ sudo arch -x86_64 gem install ffi
 cd ios/ && arch -x86_64 pod install
 ```
 
-Select your project in Xcode, and go to "Build Settings". Scroll down until you see "Search Paths", and finally, "Library Search Paths". Replace "$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)" with "$(SDKROOT)/usr/lib/swift".
+## Problems React Native Version < 0.64
+
+If you faced following build errors
+
+![](xcode-build-error.png)
+
+Select your project in Xcode, and go to "Build Settings". Scroll down until you see "Search Paths", and finally, "Library Search Paths"
+
+![](xcode-build-settings-search-path.png)
+
+Replace `$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)` with `$(SDKROOT)/usr/lib/swift`.

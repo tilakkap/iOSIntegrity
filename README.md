@@ -90,7 +90,7 @@ swift run -c release iOSIntegrityCli $METAL_LIBRARY_OUTPUT_DIR
 ```
 
 
-## Problems M1
+# Problems M1
 
 Run following commands
 ```shell
@@ -98,7 +98,7 @@ sudo arch -x86_64 gem install ffi
 cd ios/ && arch -x86_64 pod install
 ```
 
-## Problems React Native Version < 0.64
+# Problems React Native Version < 0.64
 
 If you faced following build errors
 

@@ -70,12 +70,12 @@ public class iOSIntegrity {
                     let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
 
                     if (fileKey != "integrity.txt" && fileKey != "private.key") {
-                        NSLog("INTEGRITY CHECK \(fileKey)")
+                        NSLog("INTEGRITYCHECK \(fileKey)")
                         //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
                         //integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
                         if let crc = sha256(url: fileURL) {
                             let calculatedHash = crc.map { String(format: "%02hhx", $0) }.joined()
-                            NSLog("INTEGRITY CHECK \(calculatedHash)")
+                            NSLog("INTEGRITYCHECK \(calculatedHash)")
                             integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey)))
                         }
 

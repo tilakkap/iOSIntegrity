@@ -69,7 +69,7 @@ public class iOSIntegrity {
                 if fileAttributes.isRegularFile! {
                     let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
                     debugPrint(fileKey)
-                    if (fileKey == "RN1") {
+                    if (fileKey != "integrity.txt" && fileKey != "private.key") {
 
                         //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
                         //integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
@@ -111,6 +111,7 @@ public class iOSIntegrity {
 //            }
 //        }
         integrity.sort{ $0.file < $1.file }
+        print(integrity)
         return integrity
     }
 

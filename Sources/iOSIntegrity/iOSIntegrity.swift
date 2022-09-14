@@ -6,9 +6,51 @@
 //
 
 import Foundation
-import CryptoSwift
+import CommonCrypto
 
 public class iOSIntegrity {
+
+    public static func sha256(url: URL) -> Data? {
+        do {
+            let bufferSize = 1024 * 1024
+            // Open file for reading:
+            let file = try FileHandle(forReadingFrom: url)
+            defer {
+                file.closeFile()
+            }
+
+            // Create and initialize SHA256 context:
+            var context = CC_SHA256_CTX()
+            CC_SHA256_Init(&context)
+
+            // Read up to `bufferSize` bytes, until EOF is reached, and update SHA256 context:
+            while autoreleasepool(invoking: {
+                // Read up to `bufferSize` bytes
+                let data = file.readData(ofLength: bufferSize)
+                if data.count > 0 {
+                    data.withUnsafeBytes {
+                        _ = CC_SHA256_Update(&context, $0.bindMemory(to: UInt8.self).baseAddress!, numericCast(data.count))
+                    }
+                    // Continue
+                    return true
+                } else {
+                    // End of file
+                    return false
+                }
+            }) { }
+
+            // Compute the SHA256 digest:
+            var digest = Data(count: Int(CC_SHA256_DIGEST_LENGTH))
+            digest.withUnsafeMutableBytes {
+                _ = CC_SHA256_Final($0.bindMemory(to: UInt8.self).baseAddress!, &context)
+            }
+
+            return digest
+        } catch {
+            print(error)
+            return nil
+        }
+    }
 
     public struct CheckSum: Codable, Equatable {
         var checkSum: String
@@ -19,26 +61,55 @@ public class iOSIntegrity {
 
         var integrity = [CheckSum]()
 
-        if let enumerator = FileManager.default.enumerator(at: bundlePath, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles, .skipsPackageDescendants]) {
-            for case let fileURL as URL in enumerator {
-                do {
-                    let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
-                    if fileAttributes.isRegularFile! {
+        let fileManager = FileManager.default
+        do {
+            let fileUrls = try fileManager.contentsOfDirectory(at:bundlePath, includingPropertiesForKeys: nil)
+            for fileURL in fileUrls {
+                let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
+                if fileAttributes.isRegularFile! {
+                    let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
 
-                        let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
+                    if (fileKey != "integrity.txt" && fileKey != "private.key") {
 
-                        if (fileKey == "Info.plist" || fileKey == "main.jsbundle") {
-                            if let fileData = try? Data(contentsOf: fileURL) {
-                                let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
-                                integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
-                            }
+                        //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
+                        //integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
+                        if let crc = sha256(url: fileURL) {
+                            let calculatedHash = crc.map { String(format: "%02hhx", $0) }.joined()
+                            integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey)))
                         }
+
                     }
-                } catch {
-                    print(error, fileURL)
                 }
+
             }
+        } catch {
+            print("Error while enumerating files: \(error.localizedDescription)")
         }
+
+//        if let enumerator = FileManager.default.enumerator(at: bundlePath, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles, .skipsPackageDescendants]) {
+//            for case let fileURL as URL in enumerator {
+//                do {
+//                    let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
+//                    if fileAttributes.isRegularFile! {
+//
+//                        let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
+//
+//                        if (fileKey != "integrity.txt" && fileKey != "private.key") {
+//
+//                                //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
+//                                //integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
+//                                if let crc = sha256(url: fileURL) {
+//                                    let calculatedHash = crc.map { String(format: "%02hhx", $0) }.joined()
+//                                    integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey)))
+//                                }
+//
+//                       }
+//                    }
+//                } catch {
+//                    print(error, fileURL)
+//                }
+//            }
+//        }
         integrity.sort{ $0.file < $1.file }
         return integrity
     }

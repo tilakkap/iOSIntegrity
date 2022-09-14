@@ -71,10 +71,12 @@ public class iOSIntegrity {
 
                     if (fileKey != "integrity.txt" && fileKey != "private.key") {
                         debugPrint(fileKey)
+
                         //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
                         //integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
                         if let crc = sha256(url: fileURL) {
                             let calculatedHash = crc.map { String(format: "%02hhx", $0) }.joined()
+                            debugPrint(calculatedHash)
                             integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey)))
                         }
 

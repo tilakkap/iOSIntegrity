@@ -68,7 +68,7 @@ public class iOSIntegrity {
                 let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
                 if fileAttributes.isRegularFile! {
                     let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
-
+                    debugPrint(fileKey)
                     if (fileKey != "integrity.txt" && fileKey != "private.key") {
 
                         //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")

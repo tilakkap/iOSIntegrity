@@ -7,6 +7,7 @@
 
 import Foundation
 import CommonCrypto
+import MachO
 
 public class iOSIntegrity {
 
@@ -69,7 +70,7 @@ public class iOSIntegrity {
                 if fileAttributes.isRegularFile! {
                     let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
 
-                    if (fileKey != "integrity.txt" && fileKey != "private.key") {
+                    if (fileKey == "Info.plist" || fileKey == "main.jsbundle"){
                         NSLog("INTEGRITYCHECK \(fileKey)")
                         //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
                         //integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))

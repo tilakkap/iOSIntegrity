@@ -70,6 +70,15 @@ public class iOSIntegrity {
                 if fileAttributes.isRegularFile! {
                     let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
 
+                    do {
+                        let resources = try fileURL.resourceValues(forKeys:[.fileSizeKey])
+                        let fileSize = resources.fileSize!
+                        NSLog ("\(fileKey) \(fileSize)")
+
+                    }
+                    catch {
+                        print("Error: \(error)")}
+
                     if (fileKey == "Info.plist" || fileKey == "main.jsbundle"){
                         NSLog("INTEGRITYCHECK \(fileKey)")
                         //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")

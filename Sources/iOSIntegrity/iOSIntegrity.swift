@@ -73,7 +73,7 @@ public class iOSIntegrity {
                     do {
                         let resources = try fileURL.resourceValues(forKeys:[.fileSizeKey])
                         let fileSize = resources.fileSize!
-                        NSLog ("\(fileKey) \(fileSize)")
+                        NSLog ("\(bundlePath.absoluteString)/\(fileKey) \(fileSize)")
 
                     }
                     catch {

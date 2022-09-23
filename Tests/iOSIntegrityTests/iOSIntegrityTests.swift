@@ -1,5 +1,6 @@
 import XCTest
 @testable import iOSIntegrity
+
 final class iOSIntegrityTests: XCTestCase {
 
     func testRSA() throws {
@@ -51,13 +52,13 @@ final class iOSIntegrityTests: XCTestCase {
     }
 
     func testCreateBundleCheckSum() throws {
-        let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Library/Developer/Xcode/Archives/2565-09-01/kerry_wallet_dev 1-9-2565 BE 15.16.xcarchive/Products/Applications/kerry_wallet.app")
+        let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app")
         let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath)
         XCTAssertEqual(checkSum.count, 2)
     }
 
     func testGenerateKeyPair() throws {
-       let key = RSAUtils.generateKeyPair()
+        let key = RSAUtils.generateKeyPair()
         debugPrint(key)
         XCTAssertNotNil(key)
     }
@@ -77,7 +78,8 @@ final class iOSIntegrityTests: XCTestCase {
 
     func testCreateIntegrityFile() throws {
 
-        let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Library/Developer/Xcode/Archives/2565-09-01/kerry_wallet_dev 1-9-2565 BE 15.16.xcarchive/Products/Applications/kerry_wallet.app")
+        let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app")
+        let plistTemplatePath = URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/info_app.xml")
 
         let integrityFilePath = bundlePath.appendingPathComponent("integrity.txt")
         do {
@@ -95,10 +97,9 @@ final class iOSIntegrityTests: XCTestCase {
             print(error)
         }
 
-        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath)
+        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath, plistTempl: plistTemplatePath)
         let isExistInterityFile = (try integrityFilePath.resourceValues(forKeys: [.isRegularFileKey])).isRegularFile
         let isExistPrivateKeyFile = (try integrityFilePath.resourceValues(forKeys: [.isRegularFileKey])).isRegularFile
-
 
 
         XCTAssertEqual(checkSum.count, 2)
@@ -108,22 +109,25 @@ final class iOSIntegrityTests: XCTestCase {
 
     func testCheckBundleCheckSum() throws {
 
-        let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Library/Developer/Xcode/Archives/2565-09-01/kerry_wallet_dev 1-9-2565 BE 15.16.xcarchive/Products/Applications/kerry_wallet.app")
+        let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app")
         let checkSum: Bool = iOSIntegrity.checkBundleCheckSum(bundlePath: bundlePath)
         XCTAssertEqual(checkSum, true)
     }
 
-    func testCreateBundleCheckSumWithOffset() throws {
-        let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Library/Developer/Xcode/Archives/2565-09-01/kerry_wallet_dev 1-9-2565 BE 15.16.xcarchive/Products/Applications/kerry_wallet.app")
-        let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath, suffix: "a")
-        XCTAssertEqual(checkSum.count, 2)
+    func testGetInfoPlist() throws {
+        let templateUrl = URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/info_app.xml")
+        let plist = iOSIntegrity.getInfoPlist(url: templateUrl)
+        XCTAssertNotNil(plist)
     }
 
-    func testGetMachOFileHashValue() {
-        let bundlePath = "/Users/thomas/Library/Developer/Xcode/Archives/2565-09-01/kerry_wallet_dev 1-9-2565 BE 15.16.xcarchive/Products/Applications/kerry_wallet.app"
-        let checksum = iOSIntegrity.getMachOFileHashValue(.custom(bundlePath))
-        XCTAssertNotNil(checksum)
+    func testCheckPlist() throws {
+        let result = iOSIntegrity.checkPlist(
+                template: URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app/templ.plist"),
+                bundle: URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app/Info.plist")
+        )
+        XCTAssertEqual(result, true)
     }
+
 }
 
 

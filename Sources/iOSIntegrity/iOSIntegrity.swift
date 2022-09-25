@@ -94,11 +94,7 @@ public class iOSIntegrity {
         return integrity
     }
 
-    public static func createIntegrityFile(bundlePath: URL, plistTempl: URL) -> [CheckSum] {
-
-        let plistTemplData = try? Data(contentsOf: plistTempl)
-        let plistTemplUrl = bundlePath.appendingPathComponent("templ.plist")
-        try! plistTemplData?.write(to: plistTemplUrl)
+    public static func createIntegrityFile(bundlePath: URL) -> [CheckSum] {
 
         //create checksum
         let integrity = createBundleCheckSum(bundlePath: bundlePath)

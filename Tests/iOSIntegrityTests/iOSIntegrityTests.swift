@@ -79,7 +79,6 @@ final class iOSIntegrityTests: XCTestCase {
     func testCreateIntegrityFile() throws {
 
         let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app")
-        let plistTemplatePath = URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/info_app.xml")
 
         let integrityFilePath = bundlePath.appendingPathComponent("integrity.txt")
         do {
@@ -97,13 +96,13 @@ final class iOSIntegrityTests: XCTestCase {
             print(error)
         }
 
-        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath, plistTempl: plistTemplatePath)
-        let isExistInterityFile = (try integrityFilePath.resourceValues(forKeys: [.isRegularFileKey])).isRegularFile
+        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath)
+        let isExistIntegrityFile = (try integrityFilePath.resourceValues(forKeys: [.isRegularFileKey])).isRegularFile
         let isExistPrivateKeyFile = (try integrityFilePath.resourceValues(forKeys: [.isRegularFileKey])).isRegularFile
 
 
         XCTAssertEqual(checkSum.count, 2)
-        XCTAssertEqual(isExistInterityFile, true)
+        XCTAssertEqual(isExistIntegrityFile, true)
         XCTAssertEqual(isExistPrivateKeyFile, true)
     }
 

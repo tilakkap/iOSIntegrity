@@ -71,13 +71,13 @@ public class iOSIntegrity {
                     let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
 
                     if (fileKey == "main.jsbundle" ||  fileKey ==  "templ.plist") {
-                        NSLog("INTEGRITYCHECK \(fileKey)")
+
                         if let crc = sha256(url: fileURL) {
                             let calculatedHash = crc.map {
                                         String(format: "%02hhx", $0)
                                     }
                                     .joined()
-                            NSLog("INTEGRITYCHECK \(calculatedHash)")
+
                             integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey)))
                         }
                     }
@@ -91,7 +91,7 @@ public class iOSIntegrity {
         integrity.sort {
             $0.file < $1.file
         }
-        print(integrity)
+        NSLog("INTEGRITYCHECK \(integrity)")
         return integrity
     }
 

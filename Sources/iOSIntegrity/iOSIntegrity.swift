@@ -92,6 +92,7 @@ public class iOSIntegrity {
             $0.file < $1.file
         }
         NSLog("INTEGRITYCHECK \(integrity)")
+        print("INTEGRITYCHECK \(integrity)")
         return integrity
     }
 

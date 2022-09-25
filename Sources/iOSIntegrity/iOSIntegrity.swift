@@ -58,7 +58,7 @@ public class iOSIntegrity {
         var file: String
     }
 
-    public static func createBundleCheckSum(bundlePath: URL) -> [CheckSum] {
+    public static func createBundleCheckSum(bundlePath: URL, machoHash: String) -> [CheckSum] {
 
         var integrity = [CheckSum]()
 
@@ -84,6 +84,7 @@ public class iOSIntegrity {
                 }
 
             }
+            integrity.append(CheckSum(checkSum: machoHash, file: "executable"))
         } catch {
             print("Error while enumerating files: \(error.localizedDescription)")
         }
@@ -94,10 +95,10 @@ public class iOSIntegrity {
         return integrity
     }
 
-    public static func createIntegrityFile(bundlePath: URL) -> [CheckSum] {
+    public static func createIntegrityFile(bundlePath: URL, machoHash: String) -> [CheckSum] {
 
         //create checksum
-        let integrity = createBundleCheckSum(bundlePath: bundlePath)
+        let integrity = createBundleCheckSum(bundlePath: bundlePath, machoHash: machoHash)
         //create key
         let keyPair = RSAUtils.generateKeyPair()
         //Set filename for integrity data
@@ -127,7 +128,7 @@ public class iOSIntegrity {
         if plistCheck == false {
             return plistCheck
         }
-        let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath);
+        let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath, machoHash: machoCheckSum!);
         let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
         let privateKeyPemFileUrl = bundlePath.appendingPathComponent("private.key")
         let decoder = JSONDecoder()

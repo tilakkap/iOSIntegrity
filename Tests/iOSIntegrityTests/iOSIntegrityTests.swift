@@ -52,9 +52,10 @@ final class iOSIntegrityTests: XCTestCase {
     }
 
     func testCreateBundleCheckSum() throws {
+        let machoHash = "29d6719c7be0bf98611c817833b15ee545318c1b58db38965da3e159dffcb3b2"
         let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app")
-        let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath)
-        XCTAssertEqual(checkSum.count, 2)
+        let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath, machoHash: machoHash)
+        XCTAssertEqual(checkSum.count, 3)
     }
 
     func testGenerateKeyPair() throws {
@@ -79,6 +80,7 @@ final class iOSIntegrityTests: XCTestCase {
     func testCreateIntegrityFile() throws {
 
         let bundlePath = URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app")
+        let machoHash = "29d6719c7be0bf98611c817833b15ee545318c1b58db38965da3e159dffcb3b2"
 
         let integrityFilePath = bundlePath.appendingPathComponent("integrity.txt")
         do {
@@ -96,12 +98,12 @@ final class iOSIntegrityTests: XCTestCase {
             print(error)
         }
 
-        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath)
+        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath, machoHash: machoHash)
         let isExistIntegrityFile = (try integrityFilePath.resourceValues(forKeys: [.isRegularFileKey])).isRegularFile
         let isExistPrivateKeyFile = (try integrityFilePath.resourceValues(forKeys: [.isRegularFileKey])).isRegularFile
 
 
-        XCTAssertEqual(checkSum.count, 2)
+        XCTAssertEqual(checkSum.count, 3)
         XCTAssertEqual(isExistIntegrityFile, true)
         XCTAssertEqual(isExistPrivateKeyFile, true)
     }
@@ -129,4 +131,5 @@ final class iOSIntegrityTests: XCTestCase {
 
 }
 
-
+// CLI Test
+// swift run iOSIntegrityCli "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app" 29d6719c7be0bf98611c817833b15ee545318c1b58db38965da3e159dffcb3b2

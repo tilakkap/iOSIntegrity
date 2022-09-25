@@ -125,7 +125,8 @@ public class iOSIntegrity {
     @objc
     public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL) -> Bool {
         let templateUrl = bundlePath.appendingPathComponent("templ.plist")
-
+        let machoCheckSum = MachOParse().getTextSectionDataSHA256Value()
+        NSLog("MachoCheckSum:\(machoCheckSum)")
         let plistCheck = checkPlist(template: templateUrl, bundle: bundlePath.appendingPathComponent("Info.plist") )
         if plistCheck == false {
             return plistCheck

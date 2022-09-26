@@ -162,6 +162,13 @@ public class iOSIntegrity {
                 return false
             }
         }
+
+        let deviceModels = bundlePlist!["UISupportedDevices"] as? Array<String>
+        for devices in deviceModels! {
+            if devices.starts(with: "iPhone") != true {
+                return false
+            }
+        }
         return true
     }
 }

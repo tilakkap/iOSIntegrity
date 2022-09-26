@@ -84,9 +84,25 @@ Xcode will add a empty script
 
 Put following code in the script window
 ```shell
-cd ${BUILD_DIR%Build/*}SourcePackages/checkouts/iOSIntegrity
+LOGFILE="$HOME/Desktop/xcode-post-action.txt" ;
+EXE="${ARCHIVE_PATH}/Products/Applications/${FULL_PRODUCT_NAME}/${PRODUCT_NAME}"
+
+echo "" > $LOGFILE ;
+echo "Build Post-Action" >> $LOGFILE
+plutil -convert xml1 "${ARCHIVE_PATH}/Products/Applications/${FULL_PRODUCT_NAME}/Info.plist"
 SDKROOT=macosx
-swift run -c release iOSIntegrityCli $METAL_LIBRARY_OUTPUT_DIR
+echo "EXE" "${EXE}" >> $LOGFILE
+MACHO=$(otool -l "${EXE}" | grep -A 4 __text | grep 'offset\|size')
+echo "MACHO" "${MACHO}" >> $LOGFILE
+SIZE=$(echo "${MACHO}" | sed -n 1p | sed 's/size \(.\)/\1/g' | sed -e 's/[[:space:]]*//')
+echo "SIZE" $SIZE >> $LOGFILE
+SKIP=$(echo "${MACHO}" | sed -n 2p | sed 's/offset \(.\)/\1/g' | sed -e 's/[[:space:]]*//')
+echo "SKIP" $SKIP >> $LOGFILE
+MACHO_HASH=$(dd if="${EXE}" ibs=1 skip="${SKIP}" count="${SIZE}" | shasum -a 256 | sed 's/[[:space:]-]*//g')
+echo "MACHO_HASH" $MACHO_HASH >> $LOGFILE
+echo "BUIDDIR" ${BUILD_DIR%Build/*} >> $LOGFILE
+cd ${BUILD_DIR%Build/*}SourcePackages/checkouts/iOSIntegrity
+swift run -c release iOSIntegrityCli "${ARCHIVE_PATH}/Products/Applications/${FULL_PRODUCT_NAME}" "${MACHO_HASH}" >> $LOGFILE
 ```
 
 

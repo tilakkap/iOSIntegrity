@@ -130,6 +130,7 @@ public class iOSIntegrity {
             return plistCheck
         }
         let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath, machoHash: machoCheckSum!);
+        NSLog("CURRENT CHECKSUM:\(currentCheckSum)")
         let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
         let privateKeyPemFileUrl = bundlePath.appendingPathComponent("private.key")
         let decoder = JSONDecoder()
@@ -138,6 +139,7 @@ public class iOSIntegrity {
         let encryptedBase64 = Pef2.decrypt(privateKeyPem: privateKeyPemFileUrl, encrypted: encryptedOutput)
         let encrypted = Data(base64Encoded: encryptedBase64)
         let bundleCheckSum = try! JSONDecoder().decode([CheckSum].self, from: encrypted!)
+        NSLog("BUNDLE CHECKSUM:\(bundleCheckSum)")
         return bundleCheckSum == currentCheckSum
     }
 
@@ -159,6 +161,7 @@ public class iOSIntegrity {
 
         for (key, value) in templatePlist! {
             if ((bundlePlist?[key] as AnyObject).description != (value as AnyObject).description) {
+                NSLog("PLIST CHECK FAILED:\((value as AnyObject).description)")
                 return false
             }
         }
@@ -166,6 +169,7 @@ public class iOSIntegrity {
         let deviceModels = bundlePlist!["UISupportedDevices"] as? Array<String>
         for devices in deviceModels! {
             if devices.starts(with: "iPhone") != true {
+                NSLog("PLIST DEVICE MODEL FAILED:\(devices)")
                 return false
             }
         }

@@ -152,7 +152,7 @@ public class iOSIntegrity {
         return plist
     }
 
-    public static func checkPlist(template: URL, OSVersion: Int, model: String) -> Bool {
+    public static func checkPlist(template: URL = Bundle.main.bundleURL.appendingPathComponent("templ.plist"), OSVersion: Int, model: String) -> Bool {
         let templatePlist = iOSIntegrity.getInfoPlist(url: template);
 
         let minVersion = Int(templatePlist!["MinimumOSVersion"] as! String) ?? 0

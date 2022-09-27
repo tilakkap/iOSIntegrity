@@ -7,6 +7,7 @@
 
 import Foundation
 import CommonCrypto
+import MachO
 
 public class iOSIntegrity {
 

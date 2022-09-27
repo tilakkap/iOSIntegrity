@@ -121,12 +121,9 @@ final class iOSIntegrityTests: XCTestCase {
         XCTAssertNotNil(plist)
     }
 
-    func testCheckPlist() throws {
-        let result = iOSIntegrity.checkPlist(
-                template: URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app/templ.plist"),
-                bundle: URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app/Info.plist")
-        )
-        XCTAssertEqual(result, true)
+    func testGetModel() throws {
+        let model = iOSIntegrity.getModel()
+        XCTAssertNotNil(model)
     }
 
 }

@@ -123,7 +123,7 @@ final class iOSIntegrityTests: XCTestCase {
 
     func testGetModel() throws {
         let model = iOSIntegrity.getModel()
-        XCTAssertNotNil(model)
+        XCTAssertEqual(model, "arm64")
     }
 
 }

@@ -168,6 +168,11 @@ public class iOSIntegrity {
         return identifier
     }
 
+    public static func getVersion() -> Int {
+        let os = ProcessInfo().operatingSystemVersion
+        return os.majorVersion
+    }
+
     @objc static func isFridaRunning() -> Bool {
         func swapBytesIfNeeded(port: in_port_t) -> in_port_t {
             let littleEndian = Int(OSHostByteOrder()) == OSLittleEndian

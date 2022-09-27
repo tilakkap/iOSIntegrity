@@ -126,6 +126,11 @@ final class iOSIntegrityTests: XCTestCase {
         XCTAssertEqual(model, "arm64")
     }
 
+    func testGetVersion() throws {
+        let version = iOSIntegrity.getVersion()
+        XCTAssertNotNil(version)
+    }
+
 }
 
 // CLI Test

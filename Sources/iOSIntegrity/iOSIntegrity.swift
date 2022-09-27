@@ -152,8 +152,20 @@ public class iOSIntegrity {
         return plist
     }
 
-    public static func checkPlist(template: URL, OSVersion: String, models: Array<String>) -> Bool {
+    public static func checkPlist(template: URL, OSVersion: Int, model: String) -> Bool {
         let templatePlist = iOSIntegrity.getInfoPlist(url: template);
+
+        let minVersion = Int(templatePlist!["MinimumOSVersion"] as! String) ?? 0
+        if(OSVersion < minVersion) {
+            NSLog("VERSION CHECK FAILED \(OSVersion):\(minVersion)")
+            return false
+        }
+        let minModels = templatePlist!["UISupportedDevices"] as? Array<String>
+
+        if !(minModels!.contains(model)) {
+            NSLog("MODEL CHECK FAILED \(model)")
+            return false
+        }
         return true
     }
 

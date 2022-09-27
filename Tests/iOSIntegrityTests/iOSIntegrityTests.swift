@@ -131,6 +131,33 @@ final class iOSIntegrityTests: XCTestCase {
         XCTAssertNotNil(version)
     }
 
+    func testCheckPlist() throws {
+        let result = iOSIntegrity.checkPlist(
+                template: URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app/templ.plist"),
+                OSVersion: 13,
+                model: "iPhone10,1"
+        )
+        XCTAssertEqual(result, true)
+    }
+
+    func testCheckPlistVersion() throws {
+        let result = iOSIntegrity.checkPlist(
+                template: URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app/templ.plist"),
+                OSVersion: 12,
+                model: "iPhone10,1"
+        )
+        XCTAssertEqual(result, false)
+    }
+
+    func testCheckPlistModel() throws {
+        let result = iOSIntegrity.checkPlist(
+                template: URL.init(fileURLWithPath: "/Users/thomas/Projects/swift/iOSIntegrity/Tests/test.app/templ.plist"),
+                OSVersion: 11,
+                model: "iPhone8,1"
+        )
+        XCTAssertEqual(result, false)
+    }
+
 }
 
 // CLI Test

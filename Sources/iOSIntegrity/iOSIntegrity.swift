@@ -146,6 +146,8 @@ public class iOSIntegrity {
         //write private key to file
         let privateKeyString = keyPair?.privateKey ?? ""
         try! privateKeyString.write(to: privateKeyURL, atomically: false, encoding: .utf8)
+
+
         return integrity
     }
 

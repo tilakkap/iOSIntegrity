@@ -130,4 +130,61 @@ public struct RSAUtils {
         ].joined(separator: "\n"))
     }
 
+    public static func sign(message: String, privateKeyPem: String) -> Data? {
+        let keyString = privateKeyPem
+                .replacingOccurrences(
+                        of: "-----BEGIN RSA PRIVATE KEY-----\n",
+                        with: "")
+                .replacingOccurrences(
+                        of: "\n-----END RSA PRIVATE KEY-----",
+                        with: "")
+                .replacingOccurrences(
+                        of: "\n",
+                        with: "")
+        let keyBytes = Data(base64Encoded: keyString)! as CFData
+        let attributes = [
+            kSecAttrKeyType: kSecAttrKeyTypeRSA,
+            kSecAttrKeySizeInBits: 2048,
+            kSecAttrKeyClass: kSecAttrKeyClassPrivate
+        ] as CFDictionary
+
+        var error: Unmanaged<CFError>?
+        let privateKey = SecKeyCreateWithData(keyBytes, attributes, &error)!
+
+        let algorithm: SecKeyAlgorithm = .rsaSignatureDigestPKCS1v15SHA256
+
+        // Check if the private key can be used for the specified algorithm
+        guard SecKeyIsAlgorithmSupported(privateKey, .sign, algorithm) else {
+            print("Algorithm not supported")
+            return nil
+        }
+
+        guard let data = message.data(using: String.Encoding.utf8) else {
+            print("Invalid message to sign.")
+            return nil
+        } //1
+        if let signature = SecKeyCreateSignature(privateKey,
+                algorithm,
+                data as CFData,
+                &error) as Data? {
+            return signature
+        } else {
+            if let error = error?.takeRetainedValue() {
+                print("Error signing data: \(error)")
+            }
+            return nil
+        }
+    }
+
+    public static func sign(message: String, privateKeyPem: URL) -> Data? {
+        do {
+            let privateKeyPemString = try String(contentsOf: privateKeyPem, encoding: .utf8)
+            return self.sign(message: message, privateKeyPem: privateKeyPemString)
+        } catch {
+            print("error encrypt")
+            return nil
+        }
+
+    }
+
 }

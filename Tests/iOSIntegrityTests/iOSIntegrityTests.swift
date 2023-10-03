@@ -119,6 +119,13 @@ final class iOSIntegrityTests: XCTestCase {
         XCTAssertEqual(checkSum.count, 2)
 
     }
+
+    func testRSASignature() throws {
+
+        let privateKeyPem = URL.init(fileURLWithPath: "/Users/thomas/Projects/react-native/reactNativeTemplate/keys/private.pem")
+        let signature = RSAUtils.sign(message: "Test", privateKeyPem: privateKeyPem)
+        debugPrint(signature)
+    }
 }
 
 

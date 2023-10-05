@@ -10,7 +10,15 @@ import CommonCrypto
 import MachO
 
 public class iOSIntegrity {
+    
 
+    public static var appVersion: String? {
+        return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+    }
+
+    public static var appBuild: String? {
+        return Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+    }
     public static func sha256(url: URL) -> Data? {
         do {
             let bufferSize = 1024 * 1024
@@ -58,7 +66,7 @@ public class iOSIntegrity {
         var file: String
     }
 
-    public static func createBundleCheckSum(bundlePath: URL, suffix: String? = nil) -> [CheckSum] {
+    public static func createBundleCheckSum(bundlePath: URL , version: String? = nil, build: String? = nil) -> [CheckSum] {
 
         var integrity = [CheckSum]()
 
@@ -122,47 +130,55 @@ public class iOSIntegrity {
 //            }
 //        }
         integrity.sort{ $0.file < $1.file }
-        print(integrity)
         return integrity
     }
 
-    public static func createIntegrityFile(bundlePath: URL, suffix: String? = nil) -> [CheckSum] {
+    public static func createIntegrityFile(bundlePath: URL, version: String? = nil, build: String? = nil) -> [CheckSum] {
         //create checksum
-        let integrity = createBundleCheckSum(bundlePath: bundlePath, suffix: suffix)
+
+        let integrity = createBundleCheckSum(bundlePath: bundlePath, version: version, build: build)
         //create key
-        let keyPair = RSAUtils.generateKeyPair()
+        //let keyPair = RSAUtils.generateKeyPair()
         //Set filename for integrity data
-        let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
+        //let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
         //Set filename for private key
-        let privateKeyURL = bundlePath.appendingPathComponent("private.key")
+        //let privateKeyURL = bundlePath.appendingPathComponent("private.key")
         //convert Data to Json
         let integrityJson = try! JSONEncoder().encode(integrity)
         //encrypt base64 encoded json data
-        let integrityEncrypted = Pef2.encrypt(publicKeyPem: keyPair?.publicKey ?? "", data: integrityJson.base64EncodedString())
-        //convert encrypted data to Json
-        let integrityEncryptedJson = try! JSONEncoder().encode(integrityEncrypted)
-        //write encrypted json data to file
-        try! integrityEncryptedJson.write(to: integrityFileUrl)
-        //write private key to file
-        let privateKeyString = keyPair?.privateKey ?? ""
-        try! privateKeyString.write(to: privateKeyURL, atomically: false, encoding: .utf8)
+         //let integrityEncrypted = Pef2.encrypt(publicKeyPem: keyPair?.publicKey ?? "", data: integrityJson.base64EncodedString())
+        // //convert encrypted data to Json
+        //let integrityEncryptedJson = try! JSONEncoder().encode(integrityEncrypted)
+        // //write encrypted json data to file
+        //try! integrityEncryptedJson.write(to: integrityFileUrl)
+        // //write private key to file
+        //let privateKeyString = keyPair?.privateKey ?? ""
+        //try! privateKeyString.write(to: privateKeyURL, atomically: false, encoding: .utf8)
+        
+        //call api to save integrityJson and return integrityJson
         return integrity
     }
 
     @objc
     public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL) -> Bool {
-        let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath);
-        let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
-        let privateKeyPemFileUrl = bundlePath.appendingPathComponent("private.key")
-        let decoder = JSONDecoder()
-        let integrityJson = try! Data(contentsOf: integrityFileUrl)
-        let encryptedOutput = try! decoder.decode(AESUtils.EncryptedOutput.self, from: integrityJson)
-        let encryptedBase64 = Pef2.decrypt(privateKeyPem: privateKeyPemFileUrl, encrypted: encryptedOutput)
-        let encrypted = Data(base64Encoded: encryptedBase64)
-        let bundleCheckSum = try! JSONDecoder().decode([CheckSum].self, from: encrypted!)
-        return bundleCheckSum == currentCheckSum
+
+        let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath, version: appVersion!, build: appBuild!);
+        // let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
+        // let privateKeyPemFileUrl = bundlePath.appendingPathComponent("private.key")
+        // let decoder = JSONDecoder()
+        // let integrityJson = try! Data(contentsOf: integrityFileUrl)
+        // let encryptedOutput = try! decoder.decode(AESUtils.EncryptedOutput.self, from: integrityJson)
+        // let encryptedBase64 = Pef2.decrypt(privateKeyPem: privateKeyPemFileUrl, encrypted: encryptedOutput)
+        // let encrypted = Data(base64Encoded: encryptedBase64)
+        // let bundleCheckSum = try! JSONDecoder().decode([CheckSum].self, from: encrypted!)
+        
+        //call api https://api.vdc.co.th/merchant/setting?type=integrity&build_id=84935893
+        //  return datafrom api == currentCheckSum
+        print(currentCheckSum)
+        return true
     }
 }
+
 
 
 

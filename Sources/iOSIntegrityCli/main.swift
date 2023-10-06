@@ -11,7 +11,7 @@ struct iOSIntegrityCli: ParsableCommand {
     var build: String?
 
     mutating func run() throws {
-
+        
         let bundleURL = URL.init(fileURLWithPath: bundlePath)
         let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundleURL, version: version, build: build)
         print(checkSum);

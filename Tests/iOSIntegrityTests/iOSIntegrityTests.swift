@@ -52,7 +52,7 @@ final class iOSIntegrityTests: XCTestCase {
 
     func testCreateBundleCheckSum() throws {
         let bundlePath = URL.init(fileURLWithPath: "/Users/pakdee.p/Library/Developer/Xcode/Archives/2566-10-04/kerry_wallet_UAT 4-10-2566 BE 14.46.xcarchive/Products/Applications/kerry_wallet.app")
-        let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath)
+        let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath,version: "1.1.0",build: "208")
         XCTAssertEqual(checkSum.count, 2)
     }
 
@@ -97,20 +97,20 @@ final class iOSIntegrityTests: XCTestCase {
             print(error)
         }
 
-        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath)
+        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath,version: "1.1.0",build: "208")
         XCTAssertEqual(checkSum.count, 2)
     }
 
     func testCheckBundleCheckSum() throws {
 
         let bundlePath = URL.init(fileURLWithPath: "/Users/pakdee.p/Library/Developer/Xcode/Archives/2566-10-04/kerry_wallet_UAT 4-10-2566 BE 14.46.xcarchive/Products/Applications/kerry_wallet.app")
-        let checkSum: Bool = iOSIntegrity.checkBundleCheckSum(bundlePath: bundlePath)
+        let checkSum: Bool = iOSIntegrity.checkBundleCheckSum(bundlePath: bundlePath,version: "1.1.0",build: "208")
         XCTAssertEqual(checkSum, true)
     }
 
     func testCreateBundleCheckSumWithOffset() throws {
         let bundlePath = URL.init(fileURLWithPath: "/Users/pakdee.p/Library/Developer/Xcode/Archives/2566-10-04/kerry_wallet_UAT 4-10-2566 BE 14.46.xcarchive/Products/Applications/kerry_wallet.app")
-        let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath)
+        let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath,version: "1.1.0",build: "208")
         XCTAssertEqual(checkSum.count, 2)
 
     }

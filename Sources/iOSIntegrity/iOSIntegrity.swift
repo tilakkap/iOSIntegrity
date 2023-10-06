@@ -12,13 +12,7 @@ import MachO
 public class iOSIntegrity {
     
 
-    public static var appVersion: String? {
-        return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-    }
-
-    public static var appBuild: String? {
-        return Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
-    }
+    
     public static func sha256(url: URL) -> Data? {
         do {
             let bufferSize = 1024 * 1024
@@ -64,9 +58,11 @@ public class iOSIntegrity {
     public struct CheckSum: Codable, Equatable {
         var checkSum: String
         var file: String
+        var version: String?
+        var build: String?
     }
 
-    public static func createBundleCheckSum(bundlePath: URL , version: String? = appVersion!, build: String? = appBuild!) -> [CheckSum] {
+    public static func createBundleCheckSum(bundlePath: URL, version:String?, build:String?) -> [CheckSum] {
 
         var integrity = [CheckSum]()
 
@@ -94,7 +90,7 @@ public class iOSIntegrity {
                         if let crc = sha256(url: fileURL) {
                             let calculatedHash = crc.map { String(format: "%02hhx", $0) }.joined()
                             NSLog("INTEGRITYCHECK \(calculatedHash)")
-                            integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey)))
+                            integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey),version: version,build: build))
                         }
 
                     }
@@ -133,10 +129,10 @@ public class iOSIntegrity {
         return integrity
     }
 
-    public static func createIntegrityFile(bundlePath: URL, version: String? = appVersion!, build: String? = appBuild!) -> [CheckSum] {
+    public static func createIntegrityFile(bundlePath: URL,version: String?,build:String?) -> [CheckSum] {
         //create checksum
 
-        let integrity = createBundleCheckSum(bundlePath: bundlePath, version: version, build: build)
+        let integrity = createBundleCheckSum(bundlePath: bundlePath, version:version,build:build)
         //create key
         //let keyPair = RSAUtils.generateKeyPair()
         //Set filename for integrity data
@@ -154,16 +150,14 @@ public class iOSIntegrity {
         // //write private key to file
         //let privateKeyString = keyPair?.privateKey ?? ""
         //try! privateKeyString.write(to: privateKeyURL, atomically: false, encoding: .utf8)
-        print(version)
-        print(build)
         //call api to save integrityJson and return integrityJson
         return integrity
     }
 
     @objc
-    public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL) -> Bool {
+    public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL,version: String?,build:String?) -> Bool {
 
-        let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath, version: appVersion!, build: appBuild!);
+        let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
         // let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
         // let privateKeyPemFileUrl = bundlePath.appendingPathComponent("private.key")
         // let decoder = JSONDecoder()

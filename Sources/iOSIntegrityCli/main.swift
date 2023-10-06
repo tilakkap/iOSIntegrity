@@ -11,9 +11,6 @@ struct iOSIntegrityCli: ParsableCommand {
     var build: String?
 
     mutating func run() throws {
-        
-        // let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
-        // let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
 
         let bundleURL = URL.init(fileURLWithPath: bundlePath)
         let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundleURL, version: version, build: build)

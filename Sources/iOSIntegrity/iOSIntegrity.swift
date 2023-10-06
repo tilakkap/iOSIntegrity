@@ -66,7 +66,7 @@ public class iOSIntegrity {
         var file: String
     }
 
-    public static func createBundleCheckSum(bundlePath: URL , version: String? = nil, build: String? = nil) -> [CheckSum] {
+    public static func createBundleCheckSum(bundlePath: URL , version: String? = appVersion!, build: String? = appBuild!) -> [CheckSum] {
 
         var integrity = [CheckSum]()
 
@@ -133,7 +133,7 @@ public class iOSIntegrity {
         return integrity
     }
 
-    public static func createIntegrityFile(bundlePath: URL, version: String? = nil, build: String? = nil) -> [CheckSum] {
+    public static func createIntegrityFile(bundlePath: URL, version: String? = appVersion!, build: String? = appBuild!) -> [CheckSum] {
         //create checksum
 
         let integrity = createBundleCheckSum(bundlePath: bundlePath, version: version, build: build)
@@ -154,7 +154,8 @@ public class iOSIntegrity {
         // //write private key to file
         //let privateKeyString = keyPair?.privateKey ?? ""
         //try! privateKeyString.write(to: privateKeyURL, atomically: false, encoding: .utf8)
-        
+        print(version)
+        print(build)
         //call api to save integrityJson and return integrityJson
         return integrity
     }

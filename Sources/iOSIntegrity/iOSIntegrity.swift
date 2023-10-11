@@ -58,11 +58,11 @@ public class iOSIntegrity {
     public struct CheckSum: Codable, Equatable {
         var checkSum: String
         var file: String
-        var version: String?
-        var build: String?
+        var version: String
+        var build: String
     }
 
-    public static func createBundleCheckSum(bundlePath: URL, version:String?, build:String?) -> [CheckSum] {
+    public static func createBundleCheckSum(bundlePath: URL, version:String, build:String) -> [CheckSum] {
 
         var integrity = [CheckSum]()
 
@@ -129,7 +129,7 @@ public class iOSIntegrity {
         return integrity
     }
 
-    public static func createIntegrityFile(bundlePath: URL,version: String?,build:String?) -> [CheckSum] {
+    public static func createIntegrityFile(bundlePath: URL,version: String,build:String) -> [CheckSum] {
         //create checksum
 
         let integrity = createBundleCheckSum(bundlePath: bundlePath, version:version,build:build)
@@ -155,7 +155,7 @@ public class iOSIntegrity {
     }
 
     @objc
-    public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL,version: String?,build:String?) -> Bool {
+    public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL,version: String,build:String) -> Bool {
 
         let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
         // let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
@@ -169,7 +169,8 @@ public class iOSIntegrity {
         
         //call api https://api.vdc.co.th/merchant/setting?type=integrity&build_id=84935893
         //  return datafrom api == currentCheckSum
-        print(currentCheckSum)
+        NSLog("INTEGRITY CHECKSUM \(currentCheckSum)")
+
         return true
     }
 }

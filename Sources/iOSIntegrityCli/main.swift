@@ -6,9 +6,9 @@ struct iOSIntegrityCli: ParsableCommand {
     @Argument(help: "The Bundle Path.")
     var bundlePath: String
     @Option(help: "Version for checksum for negative test")
-    var version: String?
+    var version: String
     @Option(help: "Build ID for checksum for negative test")
-    var build: String?
+    var build: String
 
     mutating func run() throws {
         

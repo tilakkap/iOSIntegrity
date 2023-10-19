@@ -8,10 +8,11 @@
 import Foundation
 import CommonCrypto
 import MachO
+import SwiftUI
 
 public class iOSIntegrity {
     
-
+    
     
     public static func sha256(url: URL) -> Data? {
         do {
@@ -21,11 +22,11 @@ public class iOSIntegrity {
             defer {
                 file.closeFile()
             }
-
+            
             // Create and initialize SHA256 context:
             var context = CC_SHA256_CTX()
             CC_SHA256_Init(&context)
-
+            
             // Read up to `bufferSize` bytes, until EOF is reached, and update SHA256 context:
             while autoreleasepool(invoking: {
                 // Read up to `bufferSize` bytes
@@ -41,31 +42,31 @@ public class iOSIntegrity {
                     return false
                 }
             }) { }
-
+            
             // Compute the SHA256 digest:
             var digest = Data(count: Int(CC_SHA256_DIGEST_LENGTH))
             digest.withUnsafeMutableBytes {
                 _ = CC_SHA256_Final($0.bindMemory(to: UInt8.self).baseAddress!, &context)
             }
-
+            
             return digest
         } catch {
             print(error)
             return nil
         }
     }
-
+    
     public struct CheckSum: Codable, Equatable {
         var checkSum: String
         var file: String
         var version: String
         var build: String
     }
-
+    
     public static func createBundleCheckSum(bundlePath: URL, version:String, build:String) -> [CheckSum] {
-
+        
         var integrity = [CheckSum]()
-
+        
         let fileManager = FileManager.default
         do {
             let fileUrls = try fileManager.contentsOfDirectory(at:bundlePath, includingPropertiesForKeys: nil)
@@ -73,16 +74,16 @@ public class iOSIntegrity {
                 let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
                 if fileAttributes.isRegularFile! {
                     let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
-
+                    
                     do {
                         let resources = try fileURL.resourceValues(forKeys:[.fileSizeKey])
                         let fileSize = resources.fileSize!
                         NSLog ("\(bundlePath.absoluteString)/\(fileKey) \(fileSize)")
-
+                        
                     }
                     catch {
                         print("Error: \(error)")}
-
+                    
                     if (fileKey == "Info.plist" || fileKey == "main.jsbundle"){
                         NSLog("INTEGRITYCHECK \(fileKey)")
                         //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
@@ -92,65 +93,167 @@ public class iOSIntegrity {
                             NSLog("INTEGRITYCHECK \(calculatedHash)")
                             integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey),version: version,build: build))
                         }
-
+                        
                     }
                 }
-
+                
             }
         } catch {
             print("Error while enumerating files: \(error.localizedDescription)")
         }
-
-//        if let enumerator = FileManager.default.enumerator(at: bundlePath, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles, .skipsPackageDescendants]) {
-//            for case let fileURL as URL in enumerator {
-//                do {
-//                    let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
-//                    if fileAttributes.isRegularFile! {
-//
-//                        let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
-//
-//                        if (fileKey != "integrity.txt" && fileKey != "private.key") {
-//
-//                                //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
-//                                //integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
-//                                if let crc = sha256(url: fileURL) {
-//                                    let calculatedHash = crc.map { String(format: "%02hhx", $0) }.joined()
-//                                    integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey)))
-//                                }
-//
-//                       }
-//                    }
-//                } catch {
-//                    print(error, fileURL)
-//                }
-//            }
-//        }
+        
+        //        if let enumerator = FileManager.default.enumerator(at: bundlePath, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles, .skipsPackageDescendants]) {
+        //            for case let fileURL as URL in enumerator {
+        //                do {
+        //                    let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
+        //                    if fileAttributes.isRegularFile! {
+        //
+        //                        let fileKey = fileURL.absoluteString.replacingOccurrences(of: bundlePath.absoluteString, with: "")
+        //
+        //                        if (fileKey != "integrity.txt" && fileKey != "private.key") {
+        //
+        //                                //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
+        //                                //integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
+        //                                if let crc = sha256(url: fileURL) {
+        //                                    let calculatedHash = crc.map { String(format: "%02hhx", $0) }.joined()
+        //                                    integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey)))
+        //                                }
+        //
+        //                       }
+        //                    }
+        //                } catch {
+        //                    print(error, fileURL)
+        //                }
+        //            }
+        //        }
         integrity.sort{ $0.file < $1.file }
         return integrity
     }
+    
+    
+    
+    
+//        public static func getToken(token:String) -> String{
+//            return token
+//        }
+    
+    
+        public enum APIError: Error {
+      
+            case requestFailed
+            case jsonSerializationError(Error)
+            case invalidData
+            case responseProcessingError(Error)
+        }
+    
+        
+        public static func patchData(with url: String, parameters: [String: Any], token: String, completion: @escaping (Result<[String: Any], APIError>) -> Void) {
+            
+           
+            
+            guard let url = URL(string: url) else{
+                completion(.failure(.invalidData))
+                print("invalid url")
+                return
+            }
+            
+            
+            
+            var request = URLRequest(url: url)
+            
+            request.httpMethod = "PATCH"
+            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
+            
+            
+            do {
+                request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+            } catch let error {
+                completion(.failure(.jsonSerializationError(error)))
+                print(error.localizedDescription)
+            }
+            
+
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+                
+                        guard error == nil else {
+                              completion(.failure(.requestFailed))
+                              return
+                          }
+
+                          guard let responseData = data else {
+                              return
+                          }
+
+                          do {
+                              //print(String(data: responseData, encoding: .utf8))
+                              if let jsonResponse = try JSONSerialization.jsonObject(with: responseData, options: .allowFragments) as? [String: Any] {
+                                  completion(.success(jsonResponse))
+                              } else {
+                                  completion(.failure(.invalidData))
+                              }
+                              
+                          } catch let jsonError {
+                              completion(.failure(.responseProcessingError(jsonError)))
+                          }
+                
+            }.resume()
+        }
+
+
+    
     public static func createIntegrityFile(bundlePath: URL,version: String,build:String) -> [CheckSum] {
-        //create checksum
-
+        // call patch api in this func
+        
         let integrity = createBundleCheckSum(bundlePath: bundlePath, version:version,build:build)
-        //create key
-        //let keyPair = RSAUtils.generateKeyPair()
-        //Set filename for integrity data
-        //let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
-        //Set filename for private key
-        //let privateKeyURL = bundlePath.appendingPathComponent("private.key")
-        //convert Data to Json
         let integrityJson = try! JSONEncoder().encode(integrity)
-        //encrypt base64 encoded json data
-         //let integrityEncrypted = Pef2.encrypt(publicKeyPem: keyPair?.publicKey ?? "", data: integrityJson.base64EncodedString())
-        // //convert encrypted data to Json
-        //let integrityEncryptedJson = try! JSONEncoder().encode(integrityEncrypted)
-        // //write encrypted json data to file
-        //try! integrityEncryptedJson.write(to: integrityFileUrl)
-        // //write private key to file
-        //let privateKeyString = keyPair?.privateKey ?? ""
-        //try! privateKeyString.write(to: privateKeyURL, atomically: false, encoding: .utf8)
-        //call api to save integrityJson and return integrityJson
+        
+        //let jsonString =  String(data: integrityJson, encoding: .utf8)
+        
+       
+        let endpoint = "https://api-uat.vdc.co.th/merchant/v1/setting?mode=add&property=builds"
+        let token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoia2V4LW1vYmlsZS1hcHAiLCJ0eXBlIjoic2l0ZSIsImVudGl0eSI6WyJLRVgiXSwiaWF0IjoxNjk3Njg4MjEzLCJpc3MiOiJzYWJ1eXRlY2guY29tIn0.HXZ3y9NUo8ZFpHw9dVG1XYmnwbew-8lSwL70meWC0G--sYEKoaiV4UOuPWvHbLwkBjKhu5h47QJMKhd39Z1ka3OYZu37YnAfqhL_xDb2QMW-ObI2mSjh7M4mOIOQruN23h--l89a8RV9Mbl3g_b2iw8xLbx9ULH66jCaIhNoVkkk_HNhtxJdkLBfSI1_nImTAtvkdTlWiZ_I3ZW7GYC8xNUfOz3On7stQz3W1LXEjiqMG9XqEpeE7FZgaCOmti3j8oStNO5kT8ItV2r8JVQX-dccqQs6OU_oFe2YeFHKOpTVu1qS6alr2dsQ7iAxQf27GIiLlnQcwtTtXBACzeryxQ"
+
+        
+        let jsonObject: [String: Any] = [
+            "merchant_id": "M14",
+            "type": "app_integrity",
+            "data": [
+                "builds":
+                    [
+                       [ "app_id": "kex_app",
+                        "version": version,
+                        "build": build,
+                        "integrity": [
+                            "plist": integrityJson
+                        ],
+                         "os": "ios"
+                       ]
+                    ],
+
+               
+                
+            ]
+        ]
+    
+        
+      
+ 
+        NSLog("jsonString \(integrityJson)")
+        
+        patchData(with: endpoint, parameters: jsonObject, token: token){ result in
+            switch result {
+            case .success(let data):
+                NSLog("PATCH DATA \(data)")
+            case .failure(let error):
+                NSLog("PATCH ERROR \(error)")
+            }
+        }
+
+
+       
+        NSLog("INTEGRITY CHECKSUM \(integrity)")
         return integrity
     }
 
@@ -158,14 +261,7 @@ public class iOSIntegrity {
     public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL,version: String,build:String) -> Bool {
 
         let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
-        // let integrityFileUrl = bundlePath.appendingPathComponent("integrity.txt")
-        // let privateKeyPemFileUrl = bundlePath.appendingPathComponent("private.key")
-        // let decoder = JSONDecoder()
-        // let integrityJson = try! Data(contentsOf: integrityFileUrl)
-        // let encryptedOutput = try! decoder.decode(AESUtils.EncryptedOutput.self, from: integrityJson)
-        // let encryptedBase64 = Pef2.decrypt(privateKeyPem: privateKeyPemFileUrl, encrypted: encryptedOutput)
-        // let encrypted = Data(base64Encoded: encryptedBase64)
-        // let bundleCheckSum = try! JSONDecoder().decode([CheckSum].self, from: encrypted!)
+
         
         //call api https://api.vdc.co.th/merchant/setting?type=integrity&build_id=84935893
         //  return datafrom api == currentCheckSum

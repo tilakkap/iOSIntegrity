@@ -97,7 +97,7 @@ final class iOSIntegrityTests: XCTestCase {
             print(error)
         }
 
-        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath,version: "1.1.0",build: "208")
+        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath,version: "1.1.0",build: "212")
         XCTAssertEqual(checkSum.count, 2)
     }
 
@@ -114,6 +114,60 @@ final class iOSIntegrityTests: XCTestCase {
         XCTAssertEqual(checkSum.count, 2)
 
     }
+    func testPostIntegrity() {
+
+            // An expectation for finishing the network call
+            let expectation = self.expectation(description: "Request should succeed")
+
+
+            //let token = "YOUR_BEARER_TOKEN"
+
+            let parameters: [String: Any] = [
+                "merchant_id": "M12846",
+                "type": "app_integrity",
+                "data": [
+                    "builds":
+                        [
+                           [ "app_id": "kex_app",
+                            "version": "1.1.1",
+                            "build": "211",
+                            "integrity": [
+                                "plist": "1212312121test"
+                            ],
+                             "os": "ios"
+                           ]
+                        ],
+
+                   
+                    
+                ]
+            ]
+
+
+        let endpoint = "https://api-test.vdc.co.th/merchant/v1/setting?mode=add&property=builds"
+        let token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoia2V4LW1vYmlsZS1hcHAiLCJ0eXBlIjoic2l0ZSIsImVudGl0eSI6WyJLRVgiXSwiaWF0IjoxNjk3NTMyMzU1LCJpc3MiOiJzYWJ1eXRlY2guY29tIn0.uQXNw1SuN9-hzELY4Y85UABuLvzKUFQldVgrghxxYPuukvwkSPptBPv7ZJQwTdp1yOQXR2Jig5650mxpqHQ0pFeKTGYPQv9w_qt3QnNxOh7syEClwsKeW8fFrBA3f856irmAEFOFE-FJBo7xfWd0flZsxBZGxqiz2DMUEBftsFcf2MzLHV3xVlAy6Y1DqchM2A4VmtrC4zEovHW4sq4BkJ3ilN6SorqchPp5tLNnbmswFLH6wAny5gUmOBUy996ENrUKTcSXTEvThFiktSKd5EG5gslUOonnGN7c5AjAFokES1SK32-GpggtqELGeAIBfu3seg9d7UQWHh0lFeD6Zw"
+        
+        
+
+        iOSIntegrity.patchData(with: endpoint, parameters: parameters, token: token) { result in
+                switch result {
+                case .success(let data):
+                    XCTAssertNotNil(data, "Data should not be nil")
+                    print(data)
+                        // Further assertions based on expected response
+                case .failure(let error):
+                    print("error= \(error)")
+                    XCTFail("Request failed with error: \(error)")
+                }
+                expectation.fulfill()
+            }
+            // Wait for the expectation to be fulfilled
+            waitForExpectations(timeout: 10) { error in
+                if let error = error {
+                    XCTFail("waitForExpectations error: \(error)")
+                }
+            }
+        }
 }
 
 

@@ -212,12 +212,12 @@ public class iOSIntegrity {
         //let jsonString =  String(data: integrityJson, encoding: .utf8)
         
        
-        let endpoint = "https://api-uat.vdc.co.th/merchant/v1/setting?mode=add&property=builds"
-        let token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoia2V4LW1vYmlsZS1hcHAiLCJ0eXBlIjoic2l0ZSIsImVudGl0eSI6WyJLRVgiXSwiaWF0IjoxNjk3Njg4MjEzLCJpc3MiOiJzYWJ1eXRlY2guY29tIn0.HXZ3y9NUo8ZFpHw9dVG1XYmnwbew-8lSwL70meWC0G--sYEKoaiV4UOuPWvHbLwkBjKhu5h47QJMKhd39Z1ka3OYZu37YnAfqhL_xDb2QMW-ObI2mSjh7M4mOIOQruN23h--l89a8RV9Mbl3g_b2iw8xLbx9ULH66jCaIhNoVkkk_HNhtxJdkLBfSI1_nImTAtvkdTlWiZ_I3ZW7GYC8xNUfOz3On7stQz3W1LXEjiqMG9XqEpeE7FZgaCOmti3j8oStNO5kT8ItV2r8JVQX-dccqQs6OU_oFe2YeFHKOpTVu1qS6alr2dsQ7iAxQf27GIiLlnQcwtTtXBACzeryxQ"
+        let endpoint = "https://api-test.vdc.co.th/merchant/v1/setting?mode=add&property=builds"
+        let token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoia2V4LW1vYmlsZS1hcHAiLCJ0eXBlIjoic2l0ZSIsImVudGl0eSI6WyJLRVgiXSwiaWF0IjoxNjk3NjkxMDQ3LCJpc3MiOiJzYWJ1eXRlY2guY29tIn0.ABQIEqkMrs_CX8syBl2cFbxjBpcgNpmWRyu9FxzTGIOdHp6v5OmqP10SJpb8KJwYrbuCzAhkLIw0nkQZCBzOWXOYYdLWRJKrc2rQhwIAJKQBi3EhRpzGguUGSd1glbdb0TIUZ372TEfChQoyoAwpEvmkkONb78F4IZSUUbeAvmJiFn4mhJVmRH1is9Wq7MJ4E8z6SFlVXqXiGFM9RtJk_bHPF_lkZrBTrX0gi6abiyBB8hhywWE1YuuDE4LSjOX7RARZDTeCDT9S7-_FWePDPU_PNLraaIeln6EJQHYe0xxVd9e6RC759-sXTDSmP2V1OXyiZQFhczdqBFAfLcPDWg"
 
         
         let jsonObject: [String: Any] = [
-            "merchant_id": "M14",
+            "merchant_id": "M12846",
             "type": "app_integrity",
             "data": [
                 "builds":

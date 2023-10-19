@@ -148,8 +148,9 @@ public class iOSIntegrity {
     
         
         public static func patchData(with url: String, parameters: [String: Any], token: String, completion: @escaping (Result<[String: Any], APIError>) -> Void) {
-            
-           
+        
+          
+          
             
             guard let url = URL(string: url) else{
                 completion(.failure(.invalidData))
@@ -174,15 +175,18 @@ public class iOSIntegrity {
                 print(error.localizedDescription)
             }
             
-
+           
+        
             URLSession.shared.dataTask(with: request) { (data, response, error) in
-                
+              
                         guard error == nil else {
                               completion(.failure(.requestFailed))
                               return
                           }
 
                           guard let responseData = data else {
+                              completion(.failure(.invalidData))
+                              print("cant patc")
                               return
                           }
 
@@ -190,30 +194,35 @@ public class iOSIntegrity {
                               //print(String(data: responseData, encoding: .utf8))
                               if let jsonResponse = try JSONSerialization.jsonObject(with: responseData, options: .allowFragments) as? [String: Any] {
                                   completion(.success(jsonResponse))
+                                 
                               } else {
+
                                   completion(.failure(.invalidData))
                               }
                               
                           } catch let jsonError {
+                      
                               completion(.failure(.responseProcessingError(jsonError)))
                           }
-                
+            
             }.resume()
+            
         }
 
 
     
     public static func createIntegrityFile(bundlePath: URL,version: String,build:String) -> [CheckSum] {
         // call patch api in this func
-        
+        let dispatchGroup = DispatchGroup()
         let integrity = createBundleCheckSum(bundlePath: bundlePath, version:version,build:build)
         let integrityJson = try! JSONEncoder().encode(integrity)
         
-        //let jsonString =  String(data: integrityJson, encoding: .utf8)
-        
-       
+        let jsonString =  String(data: integrityJson, encoding: .utf8)
+
+
         let endpoint = "https://api-test.vdc.co.th/merchant/v1/setting?mode=add&property=builds"
-        let token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoia2V4LW1vYmlsZS1hcHAiLCJ0eXBlIjoic2l0ZSIsImVudGl0eSI6WyJLRVgiXSwiaWF0IjoxNjk3NjkxMDQ3LCJpc3MiOiJzYWJ1eXRlY2guY29tIn0.ABQIEqkMrs_CX8syBl2cFbxjBpcgNpmWRyu9FxzTGIOdHp6v5OmqP10SJpb8KJwYrbuCzAhkLIw0nkQZCBzOWXOYYdLWRJKrc2rQhwIAJKQBi3EhRpzGguUGSd1glbdb0TIUZ372TEfChQoyoAwpEvmkkONb78F4IZSUUbeAvmJiFn4mhJVmRH1is9Wq7MJ4E8z6SFlVXqXiGFM9RtJk_bHPF_lkZrBTrX0gi6abiyBB8hhywWE1YuuDE4LSjOX7RARZDTeCDT9S7-_FWePDPU_PNLraaIeln6EJQHYe0xxVd9e6RC759-sXTDSmP2V1OXyiZQFhczdqBFAfLcPDWg"
+        let ep = "https://api-test.vdc.co.th/merchant/v1/setting?mode=add&property=builds"
+        let token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoia2V4LW1vYmlsZS1hcHAiLCJ0eXBlIjoic2l0ZSIsImVudGl0eSI6WyJLRVgiXSwiaWF0IjoxNjk3NzI4NzY5LCJpc3MiOiJzYWJ1eXRlY2guY29tIn0.MkRbbFuqv_Qg2GXoUzHdtJ6roAA1vbgnvWBK6sqn5LWCoJ4xs4IhAi2VbDSzOe-yzYDi84zdRWY-PGKDQnX6SLkeTfg3GHvT4mnLxMuuq4jUl_f4vRvMqL26xqIn1sbKOQozSrxfInG1r45AsgYxN_G_wvoBb1l8PEQVVODsc-G4z4la0igI18cLf-QxHf3Wbx4W7ISQhfE67XCtT2Yxo5eODZSqB38-ujnDsNeH0DKBmh3N24uEm1hH8Xjc7vuDT-yu2ML3YU6V-79M4WROBw-hNePt-IRDerBbI7j5unkoxO0EmwDgNZdFARI4u4aoEGrN5uKMywP6OYIRFQbpiw"
 
         
         let jsonObject: [String: Any] = [
@@ -226,7 +235,7 @@ public class iOSIntegrity {
                         "version": version,
                         "build": build,
                         "integrity": [
-                            "plist": integrityJson
+                            "plist": jsonString
                         ],
                          "os": "ios"
                        ]
@@ -238,21 +247,19 @@ public class iOSIntegrity {
         ]
     
         
-      
- 
-        NSLog("jsonString \(integrityJson)")
-        
-        patchData(with: endpoint, parameters: jsonObject, token: token){ result in
+            dispatchGroup.enter()
+        patchData(with: ep, parameters: jsonObject, token: token){ result in
             switch result {
             case .success(let data):
-                NSLog("PATCH DATA \(data)")
+                print(data)
             case .failure(let error):
-                NSLog("PATCH ERROR \(error)")
+               print(error)
             }
+            dispatchGroup.leave()
         }
+        dispatchGroup.wait()
 
-
-       
+        NSLog("jsonString \(integrityJson)")
         NSLog("INTEGRITY CHECKSUM \(integrity)")
         return integrity
     }

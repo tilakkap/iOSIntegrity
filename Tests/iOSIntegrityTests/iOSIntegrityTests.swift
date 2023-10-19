@@ -97,7 +97,7 @@ final class iOSIntegrityTests: XCTestCase {
             print(error)
         }
 
-        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath,version: "1.1.0",build: "212")
+        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath,version: "1.1.0",build: "209")
         XCTAssertEqual(checkSum.count, 2)
     }
 
@@ -129,10 +129,10 @@ final class iOSIntegrityTests: XCTestCase {
                     "builds":
                         [
                            [ "app_id": "kex_app",
-                            "version": "1.1.1",
-                            "build": "211",
+                            "version": "1.1.0",
+                            "build": "214",
                             "integrity": [
-                                "plist": "1212312121test"
+                                "plist": "json"
                             ],
                              "os": "ios"
                            ]

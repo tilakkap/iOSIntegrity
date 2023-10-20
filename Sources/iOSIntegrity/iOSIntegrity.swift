@@ -271,9 +271,13 @@ public class iOSIntegrity {
         let check = dataCheck
         
         let encodeCur = try! JSONEncoder().encode(currentCheckSum)
+        let encodeCurString =  String(data: encodeCur, encoding: .utf8)
+        
         let encodeCheck = try! JSONEncoder().encode(check)
         
         NSLog("INTEGRITY CHECKSUM ENCODE \(encodeCur)")
+        
+        NSLog("INTEGRITY CHECKSUM STRING \(encodeCurString)")
         NSLog("DATA CHECK ENCODE \(encodeCheck)")
         
         NSLog("INTEGRITY CHECKSUM \(currentCheckSum)")

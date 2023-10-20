@@ -271,7 +271,7 @@ public class iOSIntegrity {
         let check = dataCheck
         
         let encodeCur = try! JSONEncoder().encode(currentCheckSum)
-        let encodeCurString =  String(data: encodeCur, encoding: .utf8)
+        let encodeCurString =  String(data: encodeCur, encoding: .utf8)!
         
         let encodeCs = try! JSONEncoder().encode(encodeCurString)
         let encodeCheck = try! JSONEncoder().encode(check)

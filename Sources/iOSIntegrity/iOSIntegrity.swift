@@ -268,10 +268,12 @@ public class iOSIntegrity {
     public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL,version: String,build:String,dataCheck:String) -> Bool {
 
         let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
+        let encodeCur = try! JSONEncoder().encode(currentCheckSum)
+        
+        
+        let encodeCurString =  String(data: encodeCur, encoding: .utf8)!
         let check = dataCheck
         
-        let encodeCur = try! JSONEncoder().encode(currentCheckSum)
-        let encodeCurString =  String(data: encodeCur, encoding: .utf8)!
         
         let encodeCs = try! JSONEncoder().encode(encodeCurString)
         let encodeCheck = try! JSONEncoder().encode(check)

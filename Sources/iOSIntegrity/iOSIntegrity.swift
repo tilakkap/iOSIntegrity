@@ -265,14 +265,13 @@ public class iOSIntegrity {
     }
 
     @objc
-    public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL,version: String,build:String) -> Bool {
+    public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL,version: String,build:String,dataCheck:String) -> Bool {
 
         let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
-
+        let check = dataCheck
         
-        //call api https://api.vdc.co.th/merchant/setting?type=integrity&build_id=84935893
-        //  return datafrom api == currentCheckSum
         NSLog("INTEGRITY CHECKSUM \(currentCheckSum)")
+        NSLog("DATA CHECK \(check)")
 
         return true
     }

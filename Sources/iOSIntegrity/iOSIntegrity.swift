@@ -280,7 +280,7 @@ public class iOSIntegrity {
         
         NSLog("INTEGRITY CHECKSUM STRING \(encodeCurString)")
         NSLog("DATA CHECK ENCODE \(encodeCheck)")
-        NSLog("INTEGRITY CHECKSUM ENCODE CS \(encodeCur)")
+        NSLog("INTEGRITY CHECKSUM ENCODE CS \(encodeCs)")
         
         NSLog("INTEGRITY CHECKSUM \(currentCheckSum)")
         NSLog("DATA CHECK \(check)")

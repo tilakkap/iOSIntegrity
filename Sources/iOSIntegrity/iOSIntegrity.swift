@@ -267,11 +267,10 @@ public class iOSIntegrity {
     @objc
     public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL,version: String,build:String,dataCheck:String) -> Bool {
 
-        var currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
+        let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
         let check = dataCheck
         
-        let curcheck = currentCheckSum.map { $0.file == "Info.plist" }
-        let encodeCur = try! JSONEncoder().encode(curcheck)
+        let encodeCur = try! JSONEncoder().encode(currentCheckSum)
         let encodeCurString =  String(data: encodeCur, encoding: .utf8)!
         
         let encodeCs = try! JSONEncoder().encode(encodeCurString)

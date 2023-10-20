@@ -270,6 +270,12 @@ public class iOSIntegrity {
         let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
         let check = dataCheck
         
+        let encodeCur = try! JSONEncoder().encode(currentCheckSum)
+        let encodeCheck = try! JSONEncoder().encode(check)
+        
+        NSLog("INTEGRITY CHECKSUM ENCODE \(encodeCur)")
+        NSLog("DATA CHECK ENCODE \(encodeCheck)")
+        
         NSLog("INTEGRITY CHECKSUM \(currentCheckSum)")
         NSLog("DATA CHECK \(check)")
 

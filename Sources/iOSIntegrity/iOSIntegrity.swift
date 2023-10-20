@@ -282,8 +282,9 @@ public class iOSIntegrity {
         NSLog("DATA CHECK ENCODE \(encodeCheck)")
         NSLog("INTEGRITY CHECKSUM ENCODE CS \(encodeCs)")
         
-//        NSLog("INTEGRITY CHECKSUM \(currentCheckSum)")
-//        NSLog("DATA CHECK \(check)")
+        NSLog("DATA CHECK \(check)")
+        NSLog("INTEGRITY CHECKSUM \(encodeCurString)")
+      
 
         return encodeCs == encodeCheck
     }

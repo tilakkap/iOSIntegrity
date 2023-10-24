@@ -247,25 +247,27 @@ public class iOSIntegrity {
         ]
     
         
-            dispatchGroup.enter()
-        patchData(with: ep, parameters: jsonObject, token: token){ result in
-            switch result {
-            case .success(let data):
-                print(data)
-            case .failure(let error):
-               print(error)
-            }
-            dispatchGroup.leave()
-        }
-        dispatchGroup.wait()
+           dispatchGroup.enter()
+       patchData(with: ep, parameters: jsonObject, token: token){ result in
+           switch result {
+           case .success(let data):
+               print(data)
+           case .failure(let error):
+              print(error)
+           }
+           dispatchGroup.leave()
+       }
+       dispatchGroup.wait()
 
-        NSLog("jsonString \(integrityJson)")
+       NSLog("jsonString \(integrityJson)")
         NSLog("INTEGRITY CHECKSUM \(integrity)")
         return integrity
     }
 
     @objc
     public static func checkBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL,version: String,build:String,dataCheck:String) -> Bool {
+
+        let dispatchGroup = DispatchGroup()
 
         let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
         let encodeCur = try! JSONEncoder().encode(currentCheckSum)
@@ -277,18 +279,22 @@ public class iOSIntegrity {
         
         let encodeCs = try! JSONEncoder().encode(encodeCurString)
         let encodeCheck = try! JSONEncoder().encode(check)
-        
+
 //        NSLog("INTEGRITY CHECKSUM ENCODE \(encodeCur)")
-//        
+//
 //        NSLog("INTEGRITY CHECKSUM STRING \(encodeCurString)")
         NSLog("DATA CHECK ENCODE \(encodeCheck)")
         NSLog("INTEGRITY CHECKSUM ENCODE CS \(encodeCs)")
         
         NSLog("DATA CHECK \(check)")
         NSLog("INTEGRITY CHECKSUM \(encodeCurString)")
-      
 
-        return encodeCs == encodeCheck
+        dispatchGroup.enter()
+        let boolCheck = encodeCs == encodeCheck
+        dispatchGroup.leave()
+        dispatchGroup.wait()
+
+        return boolCheck
     }
 }
 

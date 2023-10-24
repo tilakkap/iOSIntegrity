@@ -97,14 +97,14 @@ final class iOSIntegrityTests: XCTestCase {
             print(error)
         }
 
-        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath,version: "1.1.0",build: "209")
+        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath,version: "1.1.0",build: "218")
         XCTAssertEqual(checkSum.count, 2)
     }
 
     func testCheckBundleCheckSum() throws {
-
-        let bundlePath = URL.init(fileURLWithPath: "/Users/pakdee.p/Library/Developer/Xcode/Archives/2566-10-04/kerry_wallet_UAT 4-10-2566 BE 14.46.xcarchive/Products/Applications/kerry_wallet.app")
-        let checkSum: Bool = iOSIntegrity.checkBundleCheckSum(bundlePath: bundlePath,version: "1.1.0",build: "208")
+        let ck = "[{\"checkSum\":\"d1c32562d165bf164f6ec564f0e0c2255a45d99c0c469a4f70f10124c592b906\",\"build\":\"218\",\"file\":\"Info.plist\",\"version\":\"1.1.0\"},{\"checkSum\":\"97833f8d98a1b99ff59e717adb9a2e91509197ef60ad317b04206b73e2fdc5b2\",\"build\":\"218\",\"file\":\"main.jsbundle\",\"version\":\"1.1.0\"}]"
+        let bundlePath = URL.init(fileURLWithPath: "/Users/pakdee.p/Library/Developer/Xcode/Archives/2566-10-23/kerry_wallet_UAT 23-10-2566 BE 14.51.xcarchive/Products/Applications/kerry_wallet.app")
+        let checkSum: Bool = iOSIntegrity.checkBundleCheckSum(bundlePath: bundlePath,version: "1.1.0",build: "218",dataCheck: ck)
         XCTAssertEqual(checkSum, true)
     }
 

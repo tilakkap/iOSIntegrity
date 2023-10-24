@@ -277,14 +277,17 @@ public class iOSIntegrity {
 //        let checkString = String(data: dataCheck, encoding: .utf8)!
         dispatchGroup.wait()
         //NSLog("CHECK \(dataCheck)")
-        let encodeCs = try! JSONEncoder().encode(encodeCurString)
-        let encodeCheck = try! JSONEncoder().encode(dataCheck)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+
+        let encodeCs = try! encoder.encode(encodeCurString)
+        let encodeCheck = try! encoder.encode(dataCheck)
         dispatchGroup.wait()
 //        NSLog("INTEGRITY CHECKSUM ENCODE \(encodeCur)")
 //
-//        NSLog("INTEGRITY CHECKSUM STRING \(encodeCurString)")
-//        NSLog("DATA CHECK ENCODE \(encodeCheck)")
-//        NSLog("INTEGRITY CHECKSUM ENCODE CS \(encodeCs)")
+      // NSLog("INTEGRITY CHECKSUM STRING \(encodeCurString)")
+        NSLog("DATA CHECK ENCODE \(encodeCheck)")
+        NSLog("INTEGRITY CHECKSUM ENCODE CS \(encodeCs)")
         
         NSLog("DATA CHECK \(dataCheck)")
         NSLog("INTEGRITY CHECKSUM \(encodeCurString)")

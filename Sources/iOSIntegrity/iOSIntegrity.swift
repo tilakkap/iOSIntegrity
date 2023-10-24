@@ -213,11 +213,20 @@ public class iOSIntegrity {
     
     public static func createIntegrityFile(bundlePath: URL,version: String,build:String) -> [CheckSum] {
         // call patch api in this func
+        struct ResultCreate: Codable {
+            let checkSum, build, file, version: String
+        }
+
+
+        var checkS = String()
         let dispatchGroup = DispatchGroup()
         let integrity = createBundleCheckSum(bundlePath: bundlePath, version:version,build:build)
         let integrityJson = try! JSONEncoder().encode(integrity)
-        
-        let jsonString =  String(data: integrityJson, encoding: .utf8)
+
+        let resultIn = try! JSONDecoder().decode([ResultCreate].self, from: integrityJson)
+        checkS = resultIn[0].checkSum
+        print("RES \(resultIn[0].checkSum)")
+        let jsonString =  String(data: integrityJson, encoding: .utf8)!
 
 
         let endpoint = "https://api-test.vdc.co.th/merchant/v1/setting?mode=add&property=builds"
@@ -235,7 +244,7 @@ public class iOSIntegrity {
                         "version": version,
                         "build": build,
                         "integrity": [
-                            "plist": jsonString
+                            "plist": checkS
                         ],
                          "os": "ios"
                        ]
@@ -259,7 +268,7 @@ public class iOSIntegrity {
        }
        dispatchGroup.wait()
 
-        NSLog("jsonString \(jsonString)")
+        NSLog("checksum \(checkS)")
         NSLog("INTEGRITY CHECKSUM \(integrity)")
         return integrity
     }

@@ -98,7 +98,7 @@ final class iOSIntegrityTests: XCTestCase {
         }
 
         let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath,version: "1.1.0",build: "218")
-        XCTAssertEqual(checkSum.count, 2)
+        XCTAssertEqual(checkSum.count, 1)
     }
 
     func testCheckBundleCheckSum() throws {

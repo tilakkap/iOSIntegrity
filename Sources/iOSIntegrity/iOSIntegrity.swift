@@ -243,9 +243,7 @@ public class iOSIntegrity {
                        [ "app_id": "kex_app",
                         "version": version,
                         "build": build,
-                        "integrity": [
-                            "plist": checkS
-                        ],
+                        "integrity": checkS,
                          "os": "ios"
                        ]
                     ],

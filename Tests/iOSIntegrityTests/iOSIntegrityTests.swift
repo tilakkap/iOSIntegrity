@@ -112,7 +112,7 @@ final class iOSIntegrityTests: XCTestCase {
     func testCreateBundleCheckSumWithOffset() throws {
         let bundlePath = URL.init(fileURLWithPath: "/Users/pakdee.p/Library/Developer/Xcode/Archives/2566-10-24/kerry_wallet_UAT 24-10-2566 BE 14.23.xcarchive/Products/Applications/kerry_wallet.app")
         let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath,version: "1.1.0",build: "224")
-        XCTAssertEqual(checkSum.count, 2)
+        XCTAssertEqual(checkSum.count, 1)
 
     }
     func testPostIntegrity() {
@@ -132,9 +132,7 @@ final class iOSIntegrityTests: XCTestCase {
                            [ "app_id": "kex_app",
                             "version": "1.1.0",
                             "build": "214",
-                            "integrity": [
-                                "plist": "json"
-                            ],
+                            "integrity": "",
                              "os": "ios"
                            ]
                         ],

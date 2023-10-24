@@ -273,7 +273,7 @@ public class iOSIntegrity {
         let encodeCur = try! JSONEncoder().encode(currentCheckSum)
         let encodeCurString =  String(data: encodeCur, encoding: .utf8)!
         dispatchGroup.wait()
-        let check = try! JSONEncoder().encode(dataCheck)
+        let check = dataCheck
         let checkString = String(data: check, encoding: .utf8)!
         dispatchGroup.wait()
         //NSLog("CHECK \(dataCheck)")

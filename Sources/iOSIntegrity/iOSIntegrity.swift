@@ -259,7 +259,7 @@ public class iOSIntegrity {
        }
        dispatchGroup.wait()
 
-       NSLog("jsonString \(integrityJson)")
+        NSLog("jsonString \(jsonString)")
         NSLog("INTEGRITY CHECKSUM \(integrity)")
         return integrity
     }

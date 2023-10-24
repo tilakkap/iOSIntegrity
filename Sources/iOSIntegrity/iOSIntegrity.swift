@@ -269,7 +269,6 @@ public class iOSIntegrity {
        dispatchGroup.wait()
 
         NSLog("checksum \(checkS)")
-        NSLog("INTEGRITY CHECKSUM \(integrity)")
         return integrity
     }
 
@@ -278,26 +277,35 @@ public class iOSIntegrity {
 
         let dispatchGroup = DispatchGroup()
 
-        let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
-        let encodeCur = try! JSONEncoder().encode(currentCheckSum)
-        let encodeCurString =  String(data: encodeCur, encoding: .utf8)!
-        dispatchGroup.wait()
+        struct ResultCreate: Codable {
+            let checkSum, build, file, version: String
+        }
 
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
 
-        let encodeCs = try! encoder.encode(encodeCurString)
-        let encodeCheck = try! encoder.encode(dataCheck)
-        dispatchGroup.wait()
-
-        NSLog("DATA CHECK ENCODE \(encodeCheck)")
-        NSLog("INTEGRITY CHECKSUM ENCODE CS \(encodeCs)")
-        
-        NSLog("DATA CHECK \(dataCheck)")
-        NSLog("INTEGRITY CHECKSUM \(encodeCurString)")
+        var checkS = String()
 
         dispatchGroup.enter()
-        let boolCheck = encodeCs == encodeCheck
+        let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
+        let integrityJson = try! JSONEncoder().encode(currentCheckSum)
+
+        let resultIn = try! JSONDecoder().decode([ResultCreate].self, from: integrityJson)
+        checkS = resultIn[0].checkSum
+
+
+        let encodeCurrent = try! JSONEncoder().encode(checkS)
+        let encodeDataCheck = try! JSONEncoder().encode(dataCheck)
+
+        NSLog("encode checksum \(encodeCurrent)")
+        NSLog("encode checksumApi \(encodeDataCheck)")
+        NSLog("checksum \(checkS)")
+        NSLog("checksumApi \(dataCheck)")
+
+
+        dispatchGroup.leave()
+        dispatchGroup.wait()
+
+        dispatchGroup.enter()
+        let boolCheck = encodeCurrent == encodeDataCheck
         dispatchGroup.leave()
         dispatchGroup.wait()
 

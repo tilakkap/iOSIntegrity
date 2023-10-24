@@ -84,7 +84,7 @@ public class iOSIntegrity {
                     catch {
                         print("Error: \(error)")}
                     
-                    if (fileKey == "Info.plist" || fileKey == "main.jsbundle"){
+                    if (fileKey == "main.jsbundle"){
                         NSLog("INTEGRITYCHECK \(fileKey)")
                         //let crcHex = fileData.crc32().toHexString() + (suffix ?? "")
                         //integrity.append(CheckSum(checkSum: String(crcHex), file: String(fileKey)))
@@ -273,19 +273,14 @@ public class iOSIntegrity {
         let encodeCur = try! JSONEncoder().encode(currentCheckSum)
         let encodeCurString =  String(data: encodeCur, encoding: .utf8)!
         dispatchGroup.wait()
-//        let check = dataCheck
-//        let checkString = String(data: dataCheck, encoding: .utf8)!
-        dispatchGroup.wait()
-        //NSLog("CHECK \(dataCheck)")
+
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
 
         let encodeCs = try! encoder.encode(encodeCurString)
         let encodeCheck = try! encoder.encode(dataCheck)
         dispatchGroup.wait()
-//        NSLog("INTEGRITY CHECKSUM ENCODE \(encodeCur)")
-//
-      // NSLog("INTEGRITY CHECKSUM STRING \(encodeCurString)")
+
         NSLog("DATA CHECK ENCODE \(encodeCheck)")
         NSLog("INTEGRITY CHECKSUM ENCODE CS \(encodeCs)")
         

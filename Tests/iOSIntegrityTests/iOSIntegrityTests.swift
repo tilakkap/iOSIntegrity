@@ -79,7 +79,7 @@ final class iOSIntegrityTests: XCTestCase {
     func testCreateIntegrityFile() throws {
 
         let bundlePath = URL.init(fileURLWithPath: "/Users/pakdee.p/Library/Developer/Xcode/Archives/2566-10-04/kerry_wallet_UAT 4-10-2566 BE 14.46.xcarchive/Products/Applications/kerry_wallet.app")
-
+        let expected = "0a90c7fd169991bd75c30a488f531141c5657e250f0b5ea89cb3086edf1db2d2"
         let integrityFilePath = bundlePath.appendingPathComponent("integrity.txt")
         do {
                 try FileManager.default.removeItem(at: integrityFilePath)
@@ -98,8 +98,8 @@ final class iOSIntegrityTests: XCTestCase {
             print(error)
         }
 
-        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath,version: "1.1.0",build: "218")
-        XCTAssertEqual(checkSum.count, 1)
+        let checkSum = iOSIntegrity.createIntegrityFile(bundlePath: bundlePath,version: "1.0.0",build: "100")
+        XCTAssertEqual(checkSum, expected)
     }
 
     func testCheckBundleCheckSum() throws {
@@ -126,7 +126,7 @@ final class iOSIntegrityTests: XCTestCase {
             //let token = "YOUR_BEARER_TOKEN"
 
             let parameters: [String: Any] = [
-                "merchant_id": "M12846",
+                "merchant_id": "M14",
                 "type": "app_integrity",
                 "data": [
                     "builds":
@@ -145,8 +145,8 @@ final class iOSIntegrityTests: XCTestCase {
             ]
 
 
-        let endpoint = "https://api-test.vdc.co.th/merchant/v1/setting?mode=add&property=builds"
-        let token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoia2V4LW1vYmlsZS1hcHAiLCJ0eXBlIjoic2l0ZSIsImVudGl0eSI6WyJLRVgiXSwiaWF0IjoxNjk3NTMyMzU1LCJpc3MiOiJzYWJ1eXRlY2guY29tIn0.uQXNw1SuN9-hzELY4Y85UABuLvzKUFQldVgrghxxYPuukvwkSPptBPv7ZJQwTdp1yOQXR2Jig5650mxpqHQ0pFeKTGYPQv9w_qt3QnNxOh7syEClwsKeW8fFrBA3f856irmAEFOFE-FJBo7xfWd0flZsxBZGxqiz2DMUEBftsFcf2MzLHV3xVlAy6Y1DqchM2A4VmtrC4zEovHW4sq4BkJ3ilN6SorqchPp5tLNnbmswFLH6wAny5gUmOBUy996ENrUKTcSXTEvThFiktSKd5EG5gslUOonnGN7c5AjAFokES1SK32-GpggtqELGeAIBfu3seg9d7UQWHh0lFeD6Zw"
+        let endpoint = "https://api-uat.vdc.co.th/merchant/v1/setting?mode=add&property=builds"
+        let token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoia2V4LW1vYmlsZS1hcHAiLCJ0eXBlIjoic2l0ZSIsImVudGl0eSI6WyJLRVgiXSwiaWF0IjoxNjk4MjE4MzQ4LCJpc3MiOiJzYWJ1eXRlY2guY29tIn0.296KkzqtQSB3vAMM8-Or5wFSFK_O2B848zOpxS8o1yHqb3bX74Fq28lW-tYZVyToi7AUEH28w559I0SUJIknHYqynCtDI-BDkUr6LfylQEjNbvnFC_f0ii-nD5TDpz9BEiQnJtIHaSAtHVnAfJ1U6gRJWF5kNlT03myJiZc_ZGyvrzK1oAVb5PtZx9kGYENu8NcrRAh1S15HyhQu3-6Q0k8j2pNY4VvGMERGDC6953O1Xq-NdLBWZ8bei18e-_RxddNPNJdR3hitmzjSsZfah0pj1EDgEQJbsBdhfYd_QMy4XdfOfLTND7E9y2j6zB_EGNW3joyUCK5WjNuDfvtw1g"
         
         
 

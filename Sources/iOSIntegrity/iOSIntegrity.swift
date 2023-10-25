@@ -63,10 +63,9 @@ public class iOSIntegrity {
         var build: String
     }
     
-    public static func createBundleCheckSum(bundlePath: URL, version:String, build:String) -> [CheckSum] {
-        
-        var integrity = [CheckSum]()
-        
+    public static func createBundleCheckSum(bundlePath: URL, version:String, build:String) -> String {
+
+        var integrity = ""
         let fileManager = FileManager.default
         do {
             let fileUrls = try fileManager.contentsOfDirectory(at:bundlePath, includingPropertiesForKeys: nil)
@@ -91,7 +90,8 @@ public class iOSIntegrity {
                         if let crc = sha256(url: fileURL) {
                             let calculatedHash = crc.map { String(format: "%02hhx", $0) }.joined()
                             NSLog("INTEGRITYCHECK \(calculatedHash)")
-                            integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey),version: version,build: build))
+                            //integrity.append(CheckSum(checkSum: calculatedHash, file: String(fileKey),version: version,build: build))
+                            integrity =  calculatedHash
                         }
                         
                     }
@@ -126,7 +126,7 @@ public class iOSIntegrity {
         //                }
         //            }
         //        }
-        integrity.sort{ $0.file < $1.file }
+        //integrity.sort{ $0.file < $1.file }
         return integrity
     }
     
@@ -211,22 +211,19 @@ public class iOSIntegrity {
 
 
     
-    public static func createIntegrityFile(bundlePath: URL,version: String,build:String) -> [CheckSum] {
-        // call patch api in this func
-        struct ResultCreate: Codable {
-            let checkSum, build, file, version: String
-        }
-
-
-        var checkS = String()
+    public static func createIntegrityFile(bundlePath: URL,version: String,build:String) -> String {
+//        // call patch api in this func
+//        struct ResultCreate: Codable {
+//            let checkSum, build, file, version: String
+//        }
         let dispatchGroup = DispatchGroup()
         let integrity = createBundleCheckSum(bundlePath: bundlePath, version:version,build:build)
-        let integrityJson = try! JSONEncoder().encode(integrity)
+        //let integrityJson = try! JSONEncoder().encode(integrity)
 
-        let resultIn = try! JSONDecoder().decode([ResultCreate].self, from: integrityJson)
-        checkS = resultIn[0].checkSum
-        print("RES \(resultIn[0].checkSum)")
-        let jsonString =  String(data: integrityJson, encoding: .utf8)!
+        //let resultIn = try! JSONDecoder().decode([ResultCreate].self, from: integrityJson)
+        //checkS = resultIn[0].checkSum
+        print("RES \(integrity)")
+       // let jsonString =  String(data: integrityJson, encoding: .utf8)!
 
 
         let endpoint = "https://api-test.vdc.co.th/merchant/v1/setting?mode=add&property=builds"
@@ -243,7 +240,7 @@ public class iOSIntegrity {
                        [ "app_id": "kex_app",
                         "version": version,
                         "build": build,
-                        "integrity": checkS,
+                        "integrity": integrity,
                          "os": "ios"
                        ]
                     ],
@@ -266,7 +263,7 @@ public class iOSIntegrity {
        }
        dispatchGroup.wait()
 
-        NSLog("checksum \(checkS)")
+        NSLog("checksum \(integrity)")
         return integrity
     }
 

@@ -51,9 +51,10 @@ final class iOSIntegrityTests: XCTestCase {
     }
 
     func testCreateBundleCheckSum() throws {
+        let expected = "97833f8d98a1b99ff59e717adb9a2e91509197ef60ad317b04206b73e2fdc5b2"
         let bundlePath = URL.init(fileURLWithPath: "/Users/pakdee.p/Library/Developer/Xcode/Archives/2566-10-24/kerry_wallet_UAT 24-10-2566 BE 14.23.xcarchive/Products/Applications/kerry_wallet.app")
         let checkSum = iOSIntegrity.createBundleCheckSum(bundlePath: bundlePath,version: "1.1.0",build: "224")
-        XCTAssertEqual(checkSum.count, 2)
+        XCTAssertEqual(checkSum, expected)
     }
 
     func testGenerateKeyPair() throws {

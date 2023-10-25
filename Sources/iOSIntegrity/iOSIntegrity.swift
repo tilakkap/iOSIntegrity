@@ -272,28 +272,12 @@ public class iOSIntegrity {
 
         let dispatchGroup = DispatchGroup()
 
-        struct ResultCreate: Codable {
-            let checkSum, build, file, version: String
-        }
-
-
-        var checkS = String()
-
         dispatchGroup.enter()
         let currentCheckSum = createBundleCheckSum(bundlePath: bundlePath,version:version,build:build);
-        let integrityJson = try! JSONEncoder().encode(currentCheckSum)
 
-        let resultIn = try! JSONDecoder().decode([ResultCreate].self, from: integrityJson)
-        checkS = resultIn[0].checkSum
-
-
-        let encodeCurrent = try! JSONEncoder().encode(checkS)
+        let encodeCurrent = try! JSONEncoder().encode(currentCheckSum)
         let encodeDataCheck = try! JSONEncoder().encode(dataCheck)
 
-        NSLog("encode checksum \(encodeCurrent)")
-        NSLog("encode checksumApi \(encodeDataCheck)")
-        NSLog("checksum \(checkS)")
-        NSLog("checksumApi \(dataCheck)")
 
 
         dispatchGroup.leave()

@@ -63,7 +63,7 @@ public class iOSIntegrity {
         var build: String
     }
     
-    public static func createBundleCheckSum(bundlePath: URL, version:String, build:String) -> String {
+    public static func createBundleCheckSum(bundlePath: URL = Bundle.main.bundleURL, version:String, build:String) -> String {
 
         var integrity = ""
         let fileManager = FileManager.default
